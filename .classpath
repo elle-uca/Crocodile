@@ -7,5 +7,7 @@
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="resources"/>
+	<classpathentry kind="lib" path="/home/luke/workspace/lib/miglayout-core-4.3-20121116.151612-3.jar"/>
+	<classpathentry kind="lib" path="/home/luke/workspace/lib/miglayout-swing-4.3-20121116.151626-3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

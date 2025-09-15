@@ -14,7 +14,7 @@ public class FileTableModel extends ListTableModel<File> {
 		super();
 		List<String> colum = new ArrayList<String>();
 		colum.add("Directory");
-		colum.add("Vuota");
+		colum.add("File contenuti");
 		setColumnNames(colum);
 	}
 
@@ -26,7 +26,7 @@ public class FileTableModel extends ListTableModel<File> {
 		case 0:
 			return data.get(row).getAbsolutePath();
 		case 1:
-			return data.get(row).listFiles().length > 0 ? "No": "Si";
+			return data.get(row).listFiles().length;
 		default:
 			return data.get(row).getAbsolutePath();
 		}

@@ -17,18 +17,14 @@ import javax.swing.JOptionPane;
 
 public class CrocodileController implements ActionListener{
 	
+	private final CrocodileView crocodileView;
+
+	
 	public CrocodileController(CrocodileView crocodileView) {
 		super();
 		this.crocodileView = crocodileView;
 	}
 
-//	public CController(View view2) {
-//		this.view = new CFormView();
-//		// TODO Auto-generated constructor stub
-//	}
-
-	private final CrocodileView crocodileView;
-	
 	
 	void refreshTable() {
 		crocodileView.getDirList().clear();
@@ -53,12 +49,9 @@ public class CrocodileController implements ActionListener{
 			crocodileView.getRootDirField().setText(crocodileView.getSelectedDir().getAbsolutePath().toLowerCase());
 			crocodileView.setSearchDir(crocodileView.getSearchDirField().getText());
 			
-//			view.getDirList().clear();
-//			displayDirectory(view.getSelectedDir());
-//			view.getModel().setData(view.getDirList());
-//			
+			
 			refreshTable();
-			System.out.println("Directory  :" + crocodileView.getModel().getRowCount());
+			//System.out.println("Directory  :" + crocodileView.getModel().getRowCount());
 			crocodileView.getReportLabel().setText("Directory  :" + crocodileView.getModel().getRowCount());
 			crocodileView.getSearchDirButton().setEnabled(true);
 			return;
@@ -150,8 +143,8 @@ public class CrocodileController implements ActionListener{
     		return;
     	}
     	
-    	System.out.println("path   "+File.separator+dialog.getText());
-    	System.out.println(Renamer.renameDir(f, new File(pathToRen(f.getAbsolutePath(), f.getName(), dialog.getText() ))));
+    	//System.out.println("path   "+File.separator+dialog.getText());
+    	//System.out.println(Renamer.renameDir(f, new File(pathToRen(f.getAbsolutePath(), f.getName(), dialog.getText() ))));
     	refreshTable();
     }
 	
@@ -230,12 +223,6 @@ public class CrocodileController implements ActionListener{
 	 * 
 	 */
 	class TableMouseListener extends MouseAdapter {
-
-//		private JTable table;
-//
-//		public TableMouseListener(JTable table) {
-//			this.table = table;
-//		}
 
 		@Override
 		public void mousePressed(MouseEvent event) {

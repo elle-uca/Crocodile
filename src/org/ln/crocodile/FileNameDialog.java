@@ -17,8 +17,11 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  *
@@ -36,13 +39,10 @@ public class FileNameDialog extends JDialog {
      */
     public static final int RET_OK = 1;
     
-    
-    // Variables declaration - do not modify                     
     private JButton cancelButton;
     private JLabel jLabel1;
     private JButton okButton;
     private JTextField textField;
-    // End of variables declaration                   
 
     private int returnStatus = RET_CANCEL;
 
@@ -82,6 +82,7 @@ public class FileNameDialog extends JDialog {
         cancelButton = new JButton();
         jLabel1 = new JLabel();
         textField = new JTextField();
+        jLabel1.setText("File name");
 
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent evt) {
@@ -96,51 +97,64 @@ public class FileNameDialog extends JDialog {
                 okButtonActionPerformed(evt);
             }
         });
-        gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.ipadx = 4;
-        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new Insets(63, 106, 6, 0);
-        getContentPane().add(okButton, gridBagConstraints);
-        getRootPane().setDefaultButton(okButton);
-
+        
+        textField.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                textFieldActionPerformed(evt);
+            }
+        });
+        
         cancelButton.setText("Cancel");
         cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 cancelButtonActionPerformed(evt);
             }
         });
-        gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new Insets(63, 6, 6, 6);
-        getContentPane().add(cancelButton, gridBagConstraints);
+//        gridBagConstraints = new GridBagConstraints();
+//        gridBagConstraints.gridx = 1;
+//        gridBagConstraints.gridy = 1;
+//        gridBagConstraints.ipadx = 4;
+//        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
+//        gridBagConstraints.insets = new Insets(63, 106, 6, 0);
+//        getContentPane().add(okButton, gridBagConstraints);
+//        getRootPane().setDefaultButton(okButton);
+//
+//
+//        gridBagConstraints = new GridBagConstraints();
+//        gridBagConstraints.gridx = 2;
+//        gridBagConstraints.gridy = 1;
+//        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
+//        gridBagConstraints.insets = new Insets(63, 6, 6, 6);
+//        getContentPane().add(cancelButton, gridBagConstraints);
+//
+//       
+//        gridBagConstraints = new GridBagConstraints();
+//        gridBagConstraints.gridx = 0;
+//        gridBagConstraints.gridy = 0;
+//        gridBagConstraints.ipadx = 38;
+//        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
+//        gridBagConstraints.insets = new Insets(63, 6, 0, 0);
+//        getContentPane().add(jLabel1, gridBagConstraints);
+//
+//
+//        gridBagConstraints = new GridBagConstraints();
+//        gridBagConstraints.gridx = 1;
+//        gridBagConstraints.gridy = 0;
+//        gridBagConstraints.gridwidth = 2;
+//        gridBagConstraints.ipadx = 188;
+//        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
+//        gridBagConstraints.insets = new Insets(57, 12, 0, 6);
+//        getContentPane().add(textField, gridBagConstraints);
+        
+        JPanel panel = new JPanel();
+        
+        panel.setLayout(new MigLayout("", "[][grow]", "20[][][]20"));
+        panel.add(jLabel1, 		"cell 0 0, wrap");
+        panel.add(textField,	"cell 0 1 2 1, growx, wrap, w :150:");
+        panel.add(okButton, 	"cell 0 2, align right");
+        panel.add(cancelButton, "cell 1 2, align right");
 
-        jLabel1.setText("File name");
-        gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.ipadx = 38;
-        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new Insets(63, 6, 0, 0);
-        getContentPane().add(jLabel1, gridBagConstraints);
-
-        textField.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                textFieldActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.ipadx = 188;
-        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new Insets(57, 12, 0, 6);
-        getContentPane().add(textField, gridBagConstraints);
-
+        getContentPane().add(panel);
         pack();
     }// </editor-fold>                        
 
@@ -165,8 +179,8 @@ public class FileNameDialog extends JDialog {
     
     private void doClose(int retStatus) {
         returnStatus = retStatus;
-        System.out.println("ret1    "+returnStatus);
-        System.out.println("text    "+textField.getText());
+       // System.out.println("ret1    "+returnStatus);
+       // System.out.println("text    "+textField.getText());
         setVisible(false);
         dispose();
        
@@ -178,50 +192,6 @@ public class FileNameDialog extends JDialog {
 	public String getText() {
 		return textField.getText();
 	}
-
-    /**
-     * @param args the command line arguments
-     */
-//    public static void main(String args[]) {
-//        /* Set the Nimbus look and feel */
-//        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-//        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-//         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-//         */
-//        try {
-//            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-//                if ("Nimbus".equals(info.getName())) {
-//                    UIManager.setLookAndFeel(info.getClassName());
-//                    break;
-//                }
-//            }
-//        } catch (ClassNotFoundException ex) {
-//            Logger.getLogger(FileNameDialog.class.getName()).log(Level.SEVERE, null, ex);
-//        } catch (InstantiationException ex) {
-//            Logger.getLogger(FileNameDialog.class.getName()).log(Level.SEVERE, null, ex);
-//        } catch (IllegalAccessException ex) {
-//            Logger.getLogger(FileNameDialog.class.getName()).log(Level.SEVERE, null, ex);
-//        } catch (UnsupportedLookAndFeelException ex) {
-//            Logger.getLogger(FileNameDialog.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//        //</editor-fold>
-//
-//        /* Create and display the dialog */
-//        EventQueue.invokeLater(new Runnable() {
-//            public void run() {
-//            	FileNameDialog dialog = new FileNameDialog(new JFrame(), "");
-//                dialog.addWindowListener(new WindowAdapter() {
-//                    @Override
-//                    public void windowClosing(WindowEvent e) {
-//                        System.exit(0);
-//                    }
-//                });
-//                dialog.setVisible(true);
-//            }
-//            
-//        });
-//        
-//    }
 
 
 }
