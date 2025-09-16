@@ -7,6 +7,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.List;
+import java.util.prefs.Preferences;
 
 import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
@@ -18,6 +19,9 @@ import javax.swing.JOptionPane;
 public class CrocodileController implements ActionListener{
 	
 	private final CrocodileView crocodileView;
+	
+    private static final Preferences prefs = Preferences.userRoot().node("Crocodile");
+    private static final String LAST_DIR_KEY = "lastDir";
 
 	
 	public CrocodileController(CrocodileView crocodileView) {
@@ -38,7 +42,11 @@ public class CrocodileController implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		if(e.getActionCommand().equals("Cerca")) {
 			
-			JFileChooser fc = new JFileChooser();
+			String lastPath = prefs.get(LAST_DIR_KEY, null);
+			
+			JFileChooser fc = (lastPath != null)
+                    ? new JFileChooser(new File(lastPath))
+                    : new JFileChooser();
 			fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			int returnVal = fc.showOpenDialog(null);
 
@@ -54,6 +62,7 @@ public class CrocodileController implements ActionListener{
 			//System.out.println("Directory  :" + crocodileView.getModel().getRowCount());
 			crocodileView.getReportLabel().setText("Directory  :" + crocodileView.getModel().getRowCount());
 			crocodileView.getSearchDirButton().setEnabled(true);
+			prefs.put(LAST_DIR_KEY, fc.getSelectedFile().getAbsolutePath());
 			return;
 		}
 		if(e.getActionCommand().equals("Refresh")) {

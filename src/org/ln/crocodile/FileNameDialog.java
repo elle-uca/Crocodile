@@ -1,9 +1,7 @@
 package org.ln.crocodile;
 
 import java.awt.Frame;
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -76,8 +74,6 @@ public class FileNameDialog extends JDialog {
 
     
     private void initComponents() {
-        GridBagConstraints gridBagConstraints;
-
         okButton = new JButton();
         cancelButton = new JButton();
         jLabel1 = new JLabel();
@@ -110,52 +106,19 @@ public class FileNameDialog extends JDialog {
                 cancelButtonActionPerformed(evt);
             }
         });
-//        gridBagConstraints = new GridBagConstraints();
-//        gridBagConstraints.gridx = 1;
-//        gridBagConstraints.gridy = 1;
-//        gridBagConstraints.ipadx = 4;
-//        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
-//        gridBagConstraints.insets = new Insets(63, 106, 6, 0);
-//        getContentPane().add(okButton, gridBagConstraints);
-//        getRootPane().setDefaultButton(okButton);
-//
-//
-//        gridBagConstraints = new GridBagConstraints();
-//        gridBagConstraints.gridx = 2;
-//        gridBagConstraints.gridy = 1;
-//        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
-//        gridBagConstraints.insets = new Insets(63, 6, 6, 6);
-//        getContentPane().add(cancelButton, gridBagConstraints);
-//
-//       
-//        gridBagConstraints = new GridBagConstraints();
-//        gridBagConstraints.gridx = 0;
-//        gridBagConstraints.gridy = 0;
-//        gridBagConstraints.ipadx = 38;
-//        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
-//        gridBagConstraints.insets = new Insets(63, 6, 0, 0);
-//        getContentPane().add(jLabel1, gridBagConstraints);
-//
-//
-//        gridBagConstraints = new GridBagConstraints();
-//        gridBagConstraints.gridx = 1;
-//        gridBagConstraints.gridy = 0;
-//        gridBagConstraints.gridwidth = 2;
-//        gridBagConstraints.ipadx = 188;
-//        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
-//        gridBagConstraints.insets = new Insets(57, 12, 0, 6);
-//        getContentPane().add(textField, gridBagConstraints);
+
         
         JPanel panel = new JPanel();
         
         panel.setLayout(new MigLayout("", "[][grow]", "20[][][]20"));
         panel.add(jLabel1, 		"cell 0 0, wrap");
-        panel.add(textField,	"cell 0 1 2 1, growx, wrap, w :150:");
+        panel.add(textField,	"cell 0 1 2 1, growx, wrap, w :250:");
         panel.add(okButton, 	"cell 0 2, align right");
         panel.add(cancelButton, "cell 1 2, align right");
 
         getContentPane().add(panel);
         pack();
+        
     }// </editor-fold>                        
 
     private void okButtonActionPerformed(ActionEvent evt) {                                         
@@ -179,8 +142,6 @@ public class FileNameDialog extends JDialog {
     
     private void doClose(int retStatus) {
         returnStatus = retStatus;
-       // System.out.println("ret1    "+returnStatus);
-       // System.out.println("text    "+textField.getText());
         setVisible(false);
         dispose();
        

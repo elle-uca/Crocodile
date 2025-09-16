@@ -3,10 +3,7 @@ package org.ln.crocodile;
 
 
 import java.awt.EventQueue;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.Image;
-import java.awt.Insets;
 import java.awt.Toolkit;
 import java.io.File;
 import java.net.URL;
@@ -18,6 +15,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -25,6 +23,8 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.WindowConstants;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  *
@@ -54,9 +54,7 @@ public class CrocodileView extends JFrame {
     private String searchDir = "invio";
     private File selectedDir;
     
-//    private JLabel jLabel2;
-//    private JLabel jLabel3;
-//    private JLabel jLabel4;
+
 
     private JTable table;
     private FileTableModel model;
@@ -123,8 +121,6 @@ public class CrocodileView extends JFrame {
         searchDirLabel = new JLabel();
         rootDirLabel = new JLabel();
         reportLabel = new JLabel();
-//        jLabel2 = new JLabel();
-//        jLabel3 = new JLabel();
         jLabel4 = new JLabel();
         rootDirLabel = new JLabel();
         rootDirField = new JTextField();
@@ -163,140 +159,44 @@ public class CrocodileView extends JFrame {
         actionButton.setActionCommand("Go");
         actionButton.addActionListener(controller);
         actionButton.setEnabled(false);
-        
- 
+       
     	initTable();
 
-  
-        getContentPane().setLayout(new GridBagLayout());
-        GridBagConstraints gridBagConstraints;
-
         rootDirLabel.setText("Root dir");
-        gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new Insets(9, 6, 0, 0);
-        getContentPane().add(rootDirLabel, gridBagConstraints);
-
-        //rootDirField.setText("jTextField1");
-        gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.weightx = 0.5;
-       // gridBagConstraints.ipadx = 600;
-        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new Insets(6, 12, 0, 0);
-        getContentPane().add(rootDirField, gridBagConstraints);
-
         rootDirButton.setText("Cerca");
-        gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 0;
-       // gridBagConstraints.gridheight = 2;
-        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new Insets(6, 18, 0, 6);
-        getContentPane().add(rootDirButton, gridBagConstraints);
-
         searchDirLabel.setText("Dir da cercare");
-        gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new Insets(9, 6, 0, 0);
-        getContentPane().add(searchDirLabel, gridBagConstraints);
-
-        //searchDirField.setText("jTextField1");
-        gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.weightx = 0.5;
-        //gridBagConstraints.ipadx = 600;
-        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new Insets(6, 12, 0, 0);
-        getContentPane().add(searchDirField, gridBagConstraints);
-
         searchDirButton.setText("Refresh");
-        gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 1;
-       // gridBagConstraints.gridheight = 2;
-        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new Insets(6, 18, 0, 6);
-        getContentPane().add(searchDirButton, gridBagConstraints);
-
-
-        //emptyButton.setText("jRadioButton1");
-        gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new Insets(13, 18, 0, 0);
-        getContentPane().add(emptyButton, gridBagConstraints);
-
-        //cancelButton.setText("jRadioButton2");
-        gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 2;
-        //gridBagConstraints.gridwidth = 4;
-        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new Insets(13, 131, 0, 0);
-        getContentPane().add(cancelButton, gridBagConstraints);
-        
-        //actionButton.setText("jButton3");
-        gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 2;
-       // gridBagConstraints.gridheight = 2;
-        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new Insets(12, 18, 0, 6);
-        getContentPane().add(actionButton, gridBagConstraints);
-
-        gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.gridwidth = 4;
-        gridBagConstraints.fill = GridBagConstraints.BOTH;
-        gridBagConstraints.ipadx = 608;
-        gridBagConstraints.ipady = 344;
-        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new Insets(6, 6, 0, 6);
-        getContentPane().add(scrollPane, gridBagConstraints);
-
-        //reportLabel.setText("jLabel3");
-        gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 7;
-        gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.ipadx = 333;
-        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new Insets(12, 6, 0, 0);
-        getContentPane().add(reportLabel, gridBagConstraints);
-
         jLabel4.setText("jLabel3");
-        gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 8;
-        gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.ipadx = 333;
-        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new Insets(6, 6, 15, 0);
-        getContentPane().add(jLabel4, gridBagConstraints);
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new MigLayout("", "[][grow][grow][]", "20[][][][][]20"));
         
-		Image icon = Toolkit.getDefaultToolkit().getImage(CrocodileView.class.getResource("/icons/mine_32.png"));
+        panel.add(rootDirLabel, 	"cell 0 0, wrap");
+        panel.add(rootDirField,		"cell 1 0 2 1, growx, wrap, w :250:");
+        panel.add(rootDirButton, 	"cell 3 0");
+        
+        panel.add(searchDirLabel, 	"cell 0 1, wrap");
+        panel.add(searchDirField,	"cell 1 1 2 1, growx, wrap, w :250:");
+        panel.add(searchDirButton, 	"cell 3 1");
+        
+        panel.add(emptyButton, 		"cell 1 2");
+        panel.add(cancelButton, 	"cell 2 2");
+        panel.add(actionButton, 	"cell 3 2");
+        
+        panel.add(scrollPane, 		"cell 0 3 4 1, growx, wrap");
+        
+        panel.add(reportLabel, 		"cell 0 4");
+        panel.add(jLabel4, 			"cell 0 5");
+        
+       
+		Image icon = Toolkit.getDefaultToolkit().getImage(CrocodileView.class.getResource("/icons/croc.png"));
 		
 		System.out.println(icon);
-		URL iconUrl = getClass().getResource("/icons/mine_32.png");
+		URL iconUrl = getClass().getResource("/icons/croc.png");
 		System.out.println("Icon path: " + iconUrl);  // Controllo
         setIconImage(icon);
 
-        
+        getContentPane().add(panel);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         pack();
@@ -310,30 +210,6 @@ public class CrocodileView extends JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-//        try {
-//            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-//                if ("Nimbus".equals(info.getName())) {
-//                    UIManager.setLookAndFeel(info.getClassName());
-//                    break;
-//                }
-//            }
-//        } catch (ClassNotFoundException ex) {
-//            java.util.logging.Logger.getLogger(CrocodileView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (InstantiationException ex) {
-//            java.util.logging.Logger.getLogger(CrocodileView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (IllegalAccessException ex) {
-//            java.util.logging.Logger.getLogger(CrocodileView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (UnsupportedLookAndFeelException ex) {
-//            java.util.logging.Logger.getLogger(CrocodileView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        }
-//        //</editor-fold>
-
-        /* Create and display the form */
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new CrocodileView().setVisible(true);
