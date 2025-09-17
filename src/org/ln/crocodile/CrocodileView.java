@@ -61,23 +61,12 @@ public class CrocodileView extends JFrame {
     private JPopupMenu popupMenu;
     private JMenuItem menuItemAdd;
     private JMenuItem menuItemRename;
-//    private final ImageIcon crocIcon;
-//    private final JLabel iconLabel;
 
     /**
      * Creates new form View
      */
     public CrocodileView() {
 		super("Crocodile");
-		
-		
-		
-		
-//		crocIcon = new ImageIcon(getClass().getResource("/icons/croc.png"));
-//		iconLabel = new JLabel(crocIcon);
-//		//ImageIcon img = new ImageIcon("croc.png");
-//		setIconImage(crocIcon.getImage());
-		//setIconImage(img.getImage());
 		initComponents();
     }
 
@@ -189,7 +178,8 @@ public class CrocodileView extends JFrame {
         panel.add(jLabel4, 			"cell 0 5");
         
        
-		Image icon = Toolkit.getDefaultToolkit().getImage(CrocodileView.class.getResource("/icons/croc.png"));
+		Image icon = Toolkit.getDefaultToolkit().getImage(
+				CrocodileView.class.getResource("/icons/croc.png"));
 		
 		System.out.println(icon);
 		URL iconUrl = getClass().getResource("/icons/croc.png");
@@ -200,24 +190,10 @@ public class CrocodileView extends JFrame {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         pack();
-    }// </editor-fold>                        
+    }            
 
 
 
-
-
-	/**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new CrocodileView().setVisible(true);
-            }
-        });
-    }
-    
-    
     
     // Getters and Setters
     
@@ -312,4 +288,14 @@ public class CrocodileView extends JFrame {
 	}
 
 
+	/**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new CrocodileView().setVisible(true);
+            }
+        });
+    }
 }
