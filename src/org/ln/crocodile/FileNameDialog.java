@@ -28,124 +28,123 @@ import net.miginfocom.swing.MigLayout;
 @SuppressWarnings("serial")
 public class FileNameDialog extends JDialog {
 
-    /**
-     * A return status code - returned if Cancel button has been pressed
-     */
-    public static final int RET_CANCEL = 0;
-    /**
-     * A return status code - returned if OK button has been pressed
-     */
-    public static final int RET_OK = 1;
-    
-    private JButton cancelButton;
-    private JLabel jLabel1;
-    private JButton okButton;
-    private JTextField textField;
+	/**
+	 * A return status code - returned if Cancel button has been pressed
+	 */
+	public static final int RET_CANCEL = 0;
+	/**
+	 * A return status code - returned if OK button has been pressed
+	 */
+	public static final int RET_OK = 1;
 
-    private int returnStatus = RET_CANCEL;
+	private JButton cancelButton;
+	private JLabel jLabel1;
+	private JButton okButton;
+	private JTextField textField;
 
-    /**
-     * Creates new form FileNameDialog
-     */
-    public FileNameDialog(Frame parent, String text) {
-        super(parent, true);
-        initComponents();
-        textField.setText(text);
-        // Close the dialog when Esc is pressed
-        String cancelName = "cancel";
-        InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
-        ActionMap actionMap = getRootPane().getActionMap();
-        actionMap.put(cancelName, new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
-                doClose(RET_CANCEL);
-            }
-        });
-        setLocationRelativeTo(parent);
-    }
+	private int returnStatus = RET_CANCEL;
 
-    /**
-     * @return the return status of this dialog - one of RET_OK or RET_CANCEL
-     */
-    public int getReturnStatus() {
-        return returnStatus;
-    }
+	/**
+	 * Creates new form FileNameDialog
+	 */
+	public FileNameDialog(Frame parent, String text) {
+		super(parent, true);
+		initComponents();
+		textField.setText(text);
+
+		// Close the dialog when Esc is pressed
+		String cancelName = "cancel";
+		InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
+		ActionMap actionMap = getRootPane().getActionMap();
+		actionMap.put(cancelName, new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				doClose(RET_CANCEL);
+			}
+		});
+		setLocationRelativeTo(parent);
+	}
+
+	/**
+	 * @return the return status of this dialog - one of RET_OK or RET_CANCEL
+	 */
+	public int getReturnStatus() {
+		return returnStatus;
+	}
 
 
-    
-    private void initComponents() {
-        okButton = new JButton();
-        cancelButton = new JButton();
-        jLabel1 = new JLabel();
-        textField = new JTextField();
-        jLabel1.setText("File name");
 
-        addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent evt) {
-                closeDialog(evt);
-            }
-        });
-        getContentPane().setLayout(new GridBagLayout());
+	private void initComponents() {
+		okButton = new JButton();
+		cancelButton = new JButton();
+		jLabel1 = new JLabel();
+		textField = new JTextField();
+		jLabel1.setText("File name");
 
-        okButton.setText("OK");
-        okButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                okButtonActionPerformed(evt);
-            }
-        });
-        
-        textField.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                textFieldActionPerformed(evt);
-            }
-        });
-        
-        cancelButton.setText("Cancel");
-        cancelButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
-            }
-        });
+		addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent evt) {
+				closeDialog(evt);
+			}
+		});
+		getContentPane().setLayout(new GridBagLayout());
 
-        
-        JPanel panel = new JPanel();
-        
-        panel.setLayout(new MigLayout("", "[][grow]", "20[][][]20"));
-        panel.add(jLabel1, 		"cell 0 0, wrap");
-        panel.add(textField,	"cell 0 1 2 1, growx, wrap, w :250:");
-        panel.add(okButton, 	"cell 0 2, align right");
-        panel.add(cancelButton, "cell 1 2, align right");
+		okButton.setText("OK");
+		okButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				okButtonActionPerformed(evt);
+			}
+		});
 
-        getContentPane().add(panel);
-        pack();
-        
-    }// </editor-fold>                        
+		textField.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				textFieldActionPerformed(evt);
+			}
+		});
 
-    private void okButtonActionPerformed(ActionEvent evt) {                                         
-        doClose(RET_OK);
-    }                                        
+		cancelButton.setText("Cancel");
+		cancelButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				cancelButtonActionPerformed(evt);
+			}
+		});
 
-    private void cancelButtonActionPerformed(ActionEvent evt) {                                             
-        doClose(RET_CANCEL);
-    }                                            
 
-    /**
-     * Closes the dialog
-     */
-    private void closeDialog(WindowEvent evt) {                             
-        doClose(RET_CANCEL);
-    }                            
+		JPanel panel = new JPanel();
+		panel.setLayout(new MigLayout("", "[][grow]", "20[][][]20"));
+		panel.add(jLabel1, 		"cell 0 0, wrap");
+		panel.add(textField,	"cell 0 1 2 1, growx, wrap, w :250:");
+		panel.add(okButton, 	"cell 0 2, align right");
+		panel.add(cancelButton, "cell 1 2, align right");
 
-    private void textFieldActionPerformed(ActionEvent evt) {                                          
-        // TODO add your handling code here:
-    }                                         
-    
-    private void doClose(int retStatus) {
-        returnStatus = retStatus;
-        setVisible(false);
-        dispose();
-       
-    }
+		getContentPane().add(panel);
+		pack();
+	}      
+
+	private void okButtonActionPerformed(ActionEvent evt) {                                         
+		doClose(RET_OK);
+	}                                        
+
+	private void cancelButtonActionPerformed(ActionEvent evt) {                                             
+		doClose(RET_CANCEL);
+	}                                            
+
+	/**
+	 * Closes the dialog
+	 */
+	private void closeDialog(WindowEvent evt) {                             
+		doClose(RET_CANCEL);
+	}                            
+
+	private void textFieldActionPerformed(ActionEvent evt) {                                          
+		// TODO add your handling code here:
+	}                                         
+
+	private void doClose(int retStatus) {
+		returnStatus = retStatus;
+		setVisible(false);
+		dispose();
+
+	}
 
 	/**
 	 * @return the textField
