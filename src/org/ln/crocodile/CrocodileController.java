@@ -59,7 +59,6 @@ public class CrocodileController implements ActionListener{
 			
 			
 			refreshTable();
-			//System.out.println("Directory  :" + crocodileView.getModel().getRowCount());
 			crocodileView.getReportLabel().setText("Directory  :" + crocodileView.getModel().getRowCount());
 			crocodileView.getSearchDirButton().setEnabled(true);
 			prefs.put(LAST_DIR_KEY, fc.getSelectedFile().getAbsolutePath());
@@ -80,7 +79,6 @@ public class CrocodileController implements ActionListener{
 			displayDirectorySearch(crocodileView.getSelectedDir());
 			crocodileView.getModel().setData(crocodileView.getDirList());
 
-			//refreshTable();
 			crocodileView.getReportLabel().setText("Directory  da svuotare:" + crocodileView.getModel().getRowCount());
 			crocodileView.getActionButton().setEnabled(true);
 			return;
@@ -152,8 +150,6 @@ public class CrocodileController implements ActionListener{
     		return;
     	}
     	
-    	//System.out.println("path   "+File.separator+dialog.getText());
-    	//System.out.println(Renamer.renameDir(f, new File(pathToRen(f.getAbsolutePath(), f.getName(), dialog.getText() ))));
     	refreshTable();
     }
 	
@@ -180,7 +176,6 @@ public class CrocodileController implements ActionListener{
 			// Checking of file inside directory
 			if (file.isDirectory()) {
 				if(file.getName().equals(crocodileView.getSearchDir())) {
-					//System.out.println("listfile    "+file.listFiles().length);
 					crocodileView.getDirList().add(file);
 				}
 				displayDirectorySearch(file);
@@ -237,7 +232,7 @@ public class CrocodileController implements ActionListener{
 		public void mousePressed(MouseEvent event) {
 			Point point = event.getPoint();
 			int currentRow = crocodileView.getTable().rowAtPoint(point);
-			System.out.println(currentRow);
+			//System.out.println(currentRow);
 			if(currentRow > -1) {
 				crocodileView.getTable().setRowSelectionInterval(currentRow, currentRow);
 			}
