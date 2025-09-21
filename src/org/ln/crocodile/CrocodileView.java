@@ -53,9 +53,7 @@ public class CrocodileView extends JFrame {
     private List<File> dirList;
     private String searchDir = "invio";
     private File selectedDir;
-    
-
-
+ 
     private JTable table;
     private FileTableModel model;
     private JPopupMenu popupMenu;
@@ -162,15 +160,15 @@ public class CrocodileView extends JFrame {
         
         panel.add(rootDirLabel, 	"cell 0 0, wrap");
         panel.add(rootDirField,		"cell 1 0 2 1, growx, wrap, w :250:");
-        panel.add(rootDirButton, 	"cell 3 0");
+        panel.add(rootDirButton, 	"cell 3 0, sg btn");
         
         panel.add(searchDirLabel, 	"cell 0 1, wrap");
         panel.add(searchDirField,	"cell 1 1 2 1, growx, wrap, w :250:");
-        panel.add(searchDirButton, 	"cell 3 1");
+        panel.add(searchDirButton, 	"cell 3 1, sg btn");
         
         panel.add(emptyButton, 		"cell 1 2");
         panel.add(cancelButton, 	"cell 2 2");
-        panel.add(actionButton, 	"cell 3 2");
+        panel.add(actionButton, 	"cell 3 2, sg btn");
         
         panel.add(scrollPane, 		"cell 0 3 4 1, growx, wrap");
         
@@ -181,7 +179,7 @@ public class CrocodileView extends JFrame {
 		Image icon = Toolkit.getDefaultToolkit().getImage(
 				CrocodileView.class.getResource("/icons/croc.png"));
 		
-		System.out.println(icon);
+		//System.out.println(icon);
 		URL iconUrl = getClass().getResource("/icons/croc.png");
 		System.out.println("Icon path: " + iconUrl);  // Controllo
         setIconImage(icon);
