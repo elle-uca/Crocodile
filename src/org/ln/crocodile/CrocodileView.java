@@ -59,6 +59,8 @@ public class CrocodileView extends JFrame {
     private JPopupMenu popupMenu;
     private JMenuItem menuItemAdd;
     private JMenuItem menuItemRename;
+    private JMenuItem menuItemMoveFiles;
+    private JMenuItem menuItemDeleteDir;
 
     /**
      * Creates new form View
@@ -83,10 +85,19 @@ public class CrocodileView extends JFrame {
         popupMenu = new JPopupMenu();
         menuItemAdd = new JMenuItem("Add New Dir");
         menuItemRename = new JMenuItem("Rename Current Dir");
-        popupMenu.add(menuItemAdd);
-        popupMenu.add(menuItemRename);
+        menuItemMoveFiles = new JMenuItem("Move Files To...");
+        menuItemDeleteDir = new JMenuItem("Delete Directory");
+  
         menuItemAdd.addActionListener(controller.new PopupActionListener());
         menuItemRename.addActionListener(controller.new PopupActionListener());
+        menuItemMoveFiles.addActionListener(controller.new PopupActionListener());
+        menuItemDeleteDir.addActionListener(controller.new PopupActionListener());
+
+       
+        popupMenu.add(menuItemAdd);
+        popupMenu.add(menuItemRename);       
+        popupMenu.add(menuItemMoveFiles);
+        popupMenu.add(menuItemDeleteDir);
         
         table.setComponentPopupMenu(popupMenu);
         table.addMouseListener(controller.new TableMouseListener());
@@ -272,6 +283,14 @@ public class CrocodileView extends JFrame {
 	 */
 	public JMenuItem getMenuItemRename() {
 		return menuItemRename;
+	}
+	
+	public JMenuItem getMenuItemMoveFiles() {
+	    return menuItemMoveFiles;
+	}
+	
+	public JMenuItem getMenuItemDeleteDir() {
+	    return menuItemDeleteDir;
 	}
 	
 	// Delegate methods
