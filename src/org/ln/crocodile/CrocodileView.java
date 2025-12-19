@@ -77,6 +77,7 @@ public class CrocodileView extends JFrame {
         table = new JTable();
         model = new FileTableModel();
         table.setModel(model);
+        table.setDefaultRenderer(Object.class, new DirectoryCellRenderer());
         table.setFillsViewportHeight(true);
         scrollPane = new JScrollPane();
         scrollPane.setViewportView(table);
