@@ -1,4 +1,4 @@
-package org.ln.crocodile;
+package org.ln.crocodile.view;
 
 import java.awt.Frame;
 import java.awt.GridBagLayout;

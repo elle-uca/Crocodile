@@ -1,12 +1,12 @@
-package org.ln.crocodile;
+package org.ln.crocodile.view;
 
 
 
 import java.awt.EventQueue;
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.io.File;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +23,12 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.WindowConstants;
+
+import org.ln.crocodile.CrocodileController;
+import org.ln.crocodile.action.ChooseRootDirAction;
+import org.ln.crocodile.action.ExecuteAction;
+import org.ln.crocodile.action.RefreshSearchAction;
+import org.ln.crocodile.service.DirectoryStatsService;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -50,18 +56,25 @@ public class CrocodileView extends JFrame {
     private JTextField searchDirField;
     
 	private CrocodileController controller;
-    private List<File> dirList;
+    private List<Path> dirList;
     private String searchDir = "invio";
-    private File selectedDir;
+    private Path selectedDir;
  
     private JTable table;
-    private FileTableModel model;
+ //   private FileTableModel model;
+    private DirectoryTableModel model;
+
     private JPopupMenu popupMenu;
     private JMenuItem menuItemAdd;
     private JMenuItem menuItemRename;
     private JMenuItem menuItemMoveFiles;
     private JMenuItem menuItemDeleteDir;
+    private JMenuItem menuDeleteIntermediateDir;
 
+
+    
+    private JMenuItem menuItemReorder;
+    
     /**
      * Creates new form View
      */
@@ -75,7 +88,7 @@ public class CrocodileView extends JFrame {
      */
     private void initTable() {
         table = new JTable();
-        model = new FileTableModel();
+        model = new DirectoryTableModel(new DirectoryStatsService());
         table.setModel(model);
         table.setDefaultRenderer(Object.class, new DirectoryCellRenderer());
         table.setFillsViewportHeight(true);
@@ -88,20 +101,27 @@ public class CrocodileView extends JFrame {
         menuItemRename = new JMenuItem("Rename Current Dir");
         menuItemMoveFiles = new JMenuItem("Move Files To...");
         menuItemDeleteDir = new JMenuItem("Delete Directory");
+        menuDeleteIntermediateDir = new JMenuItem("Delete Intermediate Directory");
   
-        menuItemAdd.addActionListener(controller.new PopupActionListener());
-        menuItemRename.addActionListener(controller.new PopupActionListener());
-        menuItemMoveFiles.addActionListener(controller.new PopupActionListener());
-        menuItemDeleteDir.addActionListener(controller.new PopupActionListener());
+        menuItemAdd.addActionListener(new CrocodilePopupActionListener(this, controller));
+        menuItemRename.addActionListener(new CrocodilePopupActionListener(this, controller));
+        menuItemMoveFiles.addActionListener(new CrocodilePopupActionListener(this, controller));
+        menuItemDeleteDir.addActionListener(new CrocodilePopupActionListener(this, controller));
+        menuDeleteIntermediateDir.addActionListener(new CrocodilePopupActionListener(this, controller));
+        
+        menuItemReorder = new JMenuItem("Reorder Directory...");
+        popupMenu.add(menuItemReorder);
+        menuItemReorder.addActionListener(new CrocodilePopupActionListener(this, controller));
 
        
         popupMenu.add(menuItemAdd);
         popupMenu.add(menuItemRename);       
         popupMenu.add(menuItemMoveFiles);
         popupMenu.add(menuItemDeleteDir);
+        popupMenu.add(menuDeleteIntermediateDir);
         
         table.setComponentPopupMenu(popupMenu);
-        table.addMouseListener(controller.new TableMouseListener());
+        table.addMouseListener(new TableRowSelectionMouseListener(table));
 	}
 
 
@@ -110,7 +130,7 @@ public class CrocodileView extends JFrame {
      */
     private void initComponents() {
     	controller = new CrocodileController(this);
-    	dirList = new ArrayList<File>();
+    	dirList = new ArrayList<Path>();
     	
         searchDirField = new JTextField();
         rootDirField = new JTextField();
@@ -147,19 +167,25 @@ public class CrocodileView extends JFrame {
         rootDirLabel.setText("Dir base");
         rootDirButton.setText("Cerca");
         rootDirButton.setActionCommand("Cerca");
-        rootDirButton.addActionListener(controller);
         
         searchDirButton.setText("Refresh");
         searchDirButton.setActionCommand("Refresh");
-        searchDirButton.addActionListener(controller);
         searchDirButton.setEnabled(false);
         
         actionButton.setText("Go");
         actionButton.setActionCommand("Go");
-        actionButton.addActionListener(controller);
         actionButton.setEnabled(false);
        
-    	initTable();
+        rootDirButton.addActionListener(
+                new ChooseRootDirAction(controller));
+
+        searchDirButton.addActionListener(
+                new RefreshSearchAction(controller));
+
+        actionButton.addActionListener(
+                new ExecuteAction(controller));
+        
+        initTable();
 
         rootDirLabel.setText("Root dir");
         rootDirButton.setText("Cerca");
@@ -207,11 +233,11 @@ public class CrocodileView extends JFrame {
     
     // Getters and Setters
     
-	public List<File> getDirList() {
+	public List<Path> getDirList() {
 		return dirList;
 	}
 
-	public void setDirList(List<File> dirList) {
+	public void setDirList(List<Path> dirList) {
 		this.dirList = dirList;
 	}
 
@@ -223,15 +249,15 @@ public class CrocodileView extends JFrame {
 		this.searchDir = searchDir;
 	}
 
-	public File getSelectedDir() {
+	public Path getSelectedDir() {
 		return selectedDir;
 	}
 
-	public void setSelectedDir(File selectedDir) {
+	public void setSelectedDir(Path selectedDir) {
 		this.selectedDir = selectedDir;
 	}
 
-	public FileTableModel getModel() {
+	public DirectoryTableModel getModel() {
 		return model;
 	}
 
@@ -263,9 +289,18 @@ public class CrocodileView extends JFrame {
 		return searchDirButton;
 	}
 
-	
+	public JMenuItem getMenuItemReorder() {
+	    return menuItemReorder;
+	}
 
     /**
+	 * @return the menuDeleteIntermediateDir
+	 */
+	public JMenuItem getMenuDeleteIntermediateDir() {
+		return menuDeleteIntermediateDir;
+	}
+
+	/**
 	 * @return the table
 	 */
 	public JTable getTable() {
