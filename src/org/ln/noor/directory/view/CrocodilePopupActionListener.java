@@ -1,11 +1,11 @@
-package org.ln.crocodile.view;
+package org.ln.noor.directory.view;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JMenuItem;
 
-import org.ln.crocodile.CrocodileController;
+import org.ln.noor.directory.CrocodileController;
 
 /**
  * Handles popup menu actions for the Crocodile table.

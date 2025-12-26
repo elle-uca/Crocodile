@@ -1,4 +1,4 @@
-package org.ln.crocodile.view;
+package org.ln.noor.directory.view;
 
 import java.io.Serializable;
 import java.nio.file.Files;

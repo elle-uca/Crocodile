@@ -1,4 +1,4 @@
-package org.ln.crocodile.view;
+package org.ln.noor.directory.view;
 
 import java.io.Serializable;
 import java.nio.file.Path;
@@ -8,7 +8,7 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-import org.ln.crocodile.service.DirectoryStatsService;
+import org.ln.noor.directory.service.DirectoryStatsService;
 
 /**
  * TableModel for directories only.

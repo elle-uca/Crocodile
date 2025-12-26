@@ -1,4 +1,4 @@
-package org.ln.crocodile.view.dialog;
+package org.ln.noor.directory.view.dialog;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -46,6 +46,11 @@ public class ReorderDirectoryDialog extends JDialog {
             Path selectedDir
     ) {
         super(owner, "Riorganizza directory", true);
+        if (!selectedDir.startsWith(operationRoot)) {
+            throw new IllegalArgumentException(
+                "selectedDir must be under operationRoot"
+            );
+        }
 
         this.operationRoot = operationRoot.normalize().toAbsolutePath();
         this.selectedDir   = selectedDir.normalize().toAbsolutePath();

@@ -1,11 +1,11 @@
-package org.ln.crocodile.action;
+package org.ln.noor.directory.action;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JOptionPane;
 
-import org.ln.crocodile.CrocodileController;
+import org.ln.noor.directory.CrocodileController;
 
 public class ExecuteAction implements ActionListener {
 

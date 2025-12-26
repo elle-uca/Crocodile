@@ -1,4 +1,4 @@
-package org.ln.crocodile;
+package org.ln.noor.directory;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,14 +10,16 @@ import java.util.prefs.Preferences;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
-import org.ln.crocodile.service.DirectoryFlattenService;
-import org.ln.crocodile.service.DirectoryStatsService;
-import org.ln.crocodile.util.DirectoryUtils;
-import org.ln.crocodile.util.PathUtils;
-import org.ln.crocodile.view.CrocodileView;
-import org.ln.crocodile.view.FileNameDialog;
-import org.ln.crocodile.view.dialog.FlattenDirectoryDialog;
-import org.ln.crocodile.view.dialog.ReorderDirectoryDialog;
+import org.ln.noor.directory.service.DirectoryFlattenService;
+import org.ln.noor.directory.service.DirectoryReorderService;
+import org.ln.noor.directory.service.DirectoryStatsService;
+import org.ln.noor.directory.service.FilesystemService;
+import org.ln.noor.directory.service.DirectoryReorderService.ReorderPlan;
+import org.ln.noor.directory.util.DirectoryUtils;
+import org.ln.noor.directory.view.CrocodileView;
+import org.ln.noor.directory.view.FileNameDialog;
+import org.ln.noor.directory.view.dialog.FlattenDirectoryDialog;
+import org.ln.noor.directory.view.dialog.ReorderDirectoryDialog;
 
 public class CrocodileController {
 
@@ -28,6 +30,11 @@ public class CrocodileController {
             Preferences.userRoot().node("Crocodile");
     private static final String LAST_DIR_KEY = "lastDir";
 
+    private final DirectoryReorderService reorderService =
+            new DirectoryReorderService();
+
+    private final FilesystemService filesystemService =
+            new FilesystemService();
 
 
     public CrocodileController(CrocodileView crocodileView) {
@@ -350,139 +357,91 @@ public class CrocodileController {
 
    public void reorderSelectedDirectory() {
 
-	    // 1) Riga selezionata
 	    int row = crocodileView.getSelectedRow();
 	    if (row < 0) {
+	        showWarning("Seleziona una directory.");
 	        return;
 	    }
 
-	    // 2) Directory selezionata
-	    Path dir = crocodileView.getModel()
+	    // Directory selezionata
+	    Path selectedPath = crocodileView.getModel()
 	            .getDirectoryAt(row)
 	            .normalize()
 	            .toAbsolutePath();
 
-	    // 3) Root operativa (campo "Root dir", es: /home/luke/ren)
+	    // Root operativa dell'app (campo "Root dir")
 	    Path operationRoot = crocodileView.getSelectedDir()
 	            .normalize()
 	            .toAbsolutePath();
 
-	    // 4) Root di sicurezza (directory di sistema: /home/luke o C:\Users\luke)
-	    Path securityRoot = Path.of(System.getProperty("user.home"))
-	            .normalize()
-	            .toAbsolutePath();
-
-	    // 5) Sanity check: la directory deve stare sotto la root operativa
-	    if (!dir.startsWith(operationRoot)) {
-	        showWarning("La directory selezionata non è sotto la Root dir:\n" + operationRoot);
+	    // Sanity check: la directory deve stare sotto la root operativa
+	    if (!selectedPath.startsWith(operationRoot)) {
+	        showWarning(
+	                "La directory selezionata non è sotto la Root dir:\n" +
+	                operationRoot
+	        );
 	        return;
 	    }
 
-	    // 6) Dialog
-	    ReorderDirectoryDialog dlg = new ReorderDirectoryDialog(
-	            crocodileView,
-	            operationRoot,
-	            dir
-	    );
+	    // Dialog SOLO UI
+	    ReorderDirectoryDialog dlg =
+	            new ReorderDirectoryDialog(
+	                    crocodileView,
+	                    operationRoot,
+	                    selectedPath
+	            );
+
 	    dlg.setVisible(true);
 
 	    if (dlg.getReturnStatus() != ReorderDirectoryDialog.RET_OK) {
 	        return;
 	    }
 
-	    String inserted = dlg.getInsertedSegment();
-	    String reference = dlg.getReferenceSegment();
-
-	    if (inserted == null || inserted.isBlank()
-	            || reference == null || reference.isBlank()) {
-	        showWarning("Parametri non validi.");
+	    // Pianificazione semantica (QUI si decide cosa spostare DAVVERO)
+	    ReorderPlan plan;
+	    try {
+	        plan = reorderService.planReorder(
+	                operationRoot,
+	                selectedPath,
+	                dlg.getReferenceSegment(),
+	                dlg.getInsertedSegment(),
+	                dlg.isInsertBefore()
+	        );
+	    } catch (IllegalArgumentException ex) {
+	        showWarning(ex.getMessage());
 	        return;
 	    }
 
-	    // 7) Path relativo alla root operativa
-	    // es: comune / test / Part_1
-	    Path rel = operationRoot.relativize(dir);
+	    // Sicurezza: non uscire dalla home utente
+	    Path securityRoot = Path.of(System.getProperty("user.home"))
+	            .normalize()
+	            .toAbsolutePath();
 
-	    // 8) Calcolo nuovo path
-	    Path newPath;
-	    String rootName = operationRoot.getFileName().toString();
-
-	    // --- CASO SPECIALE: riferimento = "ren" (root operativa) ---
-	    if (reference.equals(rootName)) {
-
-	        if (dlg.isInsertBefore()) {
-	            // PRIMA di "ren":
-	            // /home/luke/[INSERITO]/ren/[rel]
-	            Path opParent = operationRoot.getParent(); // /home/luke
-	            if (opParent == null) {
-	                showWarning("Impossibile determinare il parent della Root dir.");
-	                return;
-	            }
-	            newPath = opParent
-	                    .resolve(inserted)
-	                    .resolve(rootName)
-	                    .resolve(rel)
-	                    .normalize()
-	                    .toAbsolutePath();
-
-	        } else {
-	            // DOPO "ren":
-	            // /home/luke/ren/[INSERITO]/[rel]
-	            newPath = operationRoot
-	                    .resolve(inserted)
-	                    .resolve(rel)
-	                    .normalize()
-	                    .toAbsolutePath();
-	        }
-
-	    } else {
-	        // --- CASO NORMALE: riferimento dentro rel (comune, test, ecc.) ---
-	        Path relNew;
-	        try {
-	            relNew = dlg.isInsertBefore()
-	                    ? PathUtils.insertBefore(rel, reference, inserted)
-	                    : PathUtils.insertAfter(rel, reference, inserted);
-	        } catch (IllegalArgumentException ex) {
-	            showWarning(ex.getMessage());
-	            return;
-	        }
-
-	        newPath = operationRoot
-	                .resolve(relNew)
-	                .normalize()
-	                .toAbsolutePath();
-	    }
-
-	    // 9) Sicurezza: non uscire da user.home
-	    if (!newPath.startsWith(securityRoot)) {
+	    if (!plan.targetDir().startsWith(securityRoot)) {
 	        showWarning(
-	                "Operazione non consentita:\n"
-	              + "il nuovo path uscirebbe dalla directory di sistema:\n"
-	              + securityRoot
+	                "Operazione non consentita:\n" +
+	                "la directory deve restare sotto:\n" +
+	                securityRoot
 	        );
 	        return;
 	    }
 
-	    // 10) Blocco annidamento su se stessa
-	    if (newPath.startsWith(dir)) {
+	    // La destinazione non deve esistere
+	    if (Files.exists(plan.targetDir())) {
 	        showWarning(
-	                "Operazione non consentita:\n"
-	              + "la directory verrebbe annidata in se stessa."
+	                "La directory di destinazione esiste già:\n" +
+	                plan.targetDir()
 	        );
 	        return;
 	    }
 
-	    // 11) La destinazione NON deve esistere
-	    if (Files.exists(newPath)) {
-	        showWarning("La directory di destinazione esiste già:\n" + newPath);
-	        return;
-	    }
-
-	    // 12) Conferma utente
+	    // Preview onesta
 	    int confirm = JOptionPane.showConfirmDialog(
 	            crocodileView,
-	            "Directory:\n" + dir +
-	            "\n\nNuovo path:\n" + newPath +
+	            "Verrà spostata la directory:\n\n" +
+	            plan.operatedDir() +
+	            "\n\nNuovo percorso:\n\n" +
+	            plan.targetDir() +
 	            "\n\nConfermi lo spostamento?",
 	            "Conferma riorganizzazione",
 	            JOptionPane.YES_NO_OPTION,
@@ -493,21 +452,26 @@ public class CrocodileController {
 	        return;
 	    }
 
-	    // 13) Spostamento reale
+	    // Esecuzione reale
 	    try {
-	        Path targetParent = newPath.getParent();
-	        if (targetParent != null && !Files.exists(targetParent)) {
-	            Files.createDirectories(targetParent);
-	        }
-	        Files.move(dir, newPath);
+	        filesystemService.move(
+	                plan.operatedDir(),
+	                plan.targetDir()
+	        );
 	    } catch (IOException ex) {
 	        showError("Errore durante lo spostamento", ex);
 	        return;
 	    }
 
-	    // 14) Refresh UI
+	    // 🔁 Se è stata spostata la Root operativa, aggiorno la Root dell'app
+	    if (plan.operatedDir().equals(operationRoot)) {
+	        crocodileView.setSelectedDir(plan.targetDir());
+	        crocodileView.getRootDirField().setText(plan.targetDir().toString());
+	    }
+
 	    refreshTable();
 	}
+
 
 
 

@@ -1,4 +1,4 @@
-package org.ln.crocodile.view;
+package org.ln.noor.directory.view;
 
 import java.awt.Color;
 import java.awt.Component;

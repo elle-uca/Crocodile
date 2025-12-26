@@ -1,4 +1,4 @@
-package org.ln.crocodile.view;
+package org.ln.noor.directory.view;
 
 
 
@@ -24,11 +24,11 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.WindowConstants;
 
-import org.ln.crocodile.CrocodileController;
-import org.ln.crocodile.action.ChooseRootDirAction;
-import org.ln.crocodile.action.ExecuteAction;
-import org.ln.crocodile.action.RefreshSearchAction;
-import org.ln.crocodile.service.DirectoryStatsService;
+import org.ln.noor.directory.CrocodileController;
+import org.ln.noor.directory.action.ChooseRootDirAction;
+import org.ln.noor.directory.action.ExecuteAction;
+import org.ln.noor.directory.action.RefreshSearchAction;
+import org.ln.noor.directory.service.DirectoryStatsService;
 
 import net.miginfocom.swing.MigLayout;
 

@@ -1,4 +1,4 @@
-package org.ln.crocodile.util;
+package org.ln.noor.directory.util;
 
 import java.nio.file.Path;
 import java.util.Objects;

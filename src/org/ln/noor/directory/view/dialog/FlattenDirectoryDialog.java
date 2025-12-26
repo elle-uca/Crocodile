@@ -1,8 +1,8 @@
-package org.ln.crocodile.view.dialog;
+package org.ln.noor.directory.view.dialog;
 
 import javax.swing.*;
 
-import org.ln.crocodile.service.DirectoryFlattenService.ConflictStrategy;
+import org.ln.noor.directory.service.DirectoryFlattenService.ConflictStrategy;
 
 @SuppressWarnings("serial")
 public class FlattenDirectoryDialog extends JDialog {
