@@ -2,15 +2,14 @@ package org.ln.noor.directory.view;
 
 
 
-import java.awt.EventQueue;
 import java.awt.Image;
-import java.awt.Toolkit;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -61,7 +60,6 @@ public class CrocodileView extends JFrame {
     private Path selectedDir;
  
     private JTable table;
- //   private FileTableModel model;
     private DirectoryTableModel model;
 
     private JPopupMenu popupMenu;
@@ -214,12 +212,15 @@ public class CrocodileView extends JFrame {
         panel.add(jLabel4, 			"cell 0 5");
         
        
-		Image icon = Toolkit.getDefaultToolkit().getImage(
-				CrocodileView.class.getResource("/icons/croc.png"));
-		
-		//System.out.println(icon);
-		URL iconUrl = getClass().getResource("/icons/croc.png");
-		System.out.println("Icon path: " + iconUrl);  // Controllo
+        URL iconUrl = CrocodileView.class
+                .getClassLoader()
+                .getResource("icons/croc.png");
+
+        if (iconUrl == null) {
+            throw new IllegalStateException("Icon not found: icons/croc.png");
+        }
+
+        Image icon = new ImageIcon(iconUrl).getImage();
         setIconImage(icon);
 
         getContentPane().add(panel);
@@ -341,14 +342,4 @@ public class CrocodileView extends JFrame {
 	}
 
 
-	/**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new CrocodileView().setVisible(true);
-            }
-        });
-    }
 }
