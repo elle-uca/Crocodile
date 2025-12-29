@@ -1,4 +1,4 @@
-package org.ln.noor.tools.directory;
+package org.ln.noor.directory.api;
 
 import javax.swing.SwingUtilities;
 import org.ln.noor.directory.view.CrocodileView;

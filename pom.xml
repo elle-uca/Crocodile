@@ -1,40 +1,40 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">  <modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-  
-	<groupId>org.ln.noor</groupId>
-	<artifactId>noor-tools-directory</artifactId>
-	<version>0.1.0</version>
-  
-  	<dependencies>
-          <dependency>
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.ln.noor</groupId>
+        <artifactId>noor-parent</artifactId>
+        <version>1.0.0</version>
+        <relativePath>../noor-parent/pom.xml</relativePath>
+    </parent>
+
+    <artifactId>noor-tools-directory</artifactId>
+    <version>0.1.0</version>
+
+    <name>NOOR Directory Tool</name>
+
+    <dependencies>
+
+        <!-- UI -->
+        <dependency>
             <groupId>com.miglayout</groupId>
             <artifactId>miglayout-swing</artifactId>
-            <version>11.3</version>
         </dependency>
+
         <dependency>
             <groupId>com.formdev</groupId>
             <artifactId>flatlaf</artifactId>
-            <version>3.6.2</version>
         </dependency>
-     
-  </dependencies>
-<properties>
-    <java.version>21</java.version>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-</properties>
 
-<build>
-    <plugins>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.13.0</version>
-            <configuration>
-                <release>${java.version}</release>
-            </configuration>
-        </plugin>
-    </plugins>
-</build>
+        <dependency>
+            <groupId>com.formdev</groupId>
+            <artifactId>flatlaf-extras</artifactId>
+        </dependency>
+
+    </dependencies>
+
+
 </project>
