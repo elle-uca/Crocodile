@@ -8,13 +8,14 @@ import java.util.List;
 import java.util.prefs.Preferences;
 
 import javax.swing.JFileChooser;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
 import org.ln.noor.directory.service.DirectoryFlattenService;
 import org.ln.noor.directory.service.DirectoryReorderService;
+import org.ln.noor.directory.service.DirectoryReorderService.ReorderPlan;
 import org.ln.noor.directory.service.DirectoryStatsService;
 import org.ln.noor.directory.service.FilesystemService;
-import org.ln.noor.directory.service.DirectoryReorderService.ReorderPlan;
 import org.ln.noor.directory.util.DirectoryUtils;
 import org.ln.noor.directory.view.CrocodileView;
 import org.ln.noor.directory.view.FileNameDialog;
@@ -242,6 +243,30 @@ public class CrocodileController {
         }
 
         refreshTable();
+    }
+    
+    private boolean isDirectoryEmpty(Path dir) {
+        try (var stream = Files.list(dir)) {
+            return stream.findAny().isEmpty();
+        } catch (IOException e) {
+            return true; // prudenziale
+        }
+    }
+
+    public void updateMoveMenuState() {
+
+        JMenuItem moveItem = crocodileView.getMenuItemMoveFiles();
+
+        int row = crocodileView.getSelectedRow();
+        if (row < 0) {
+            moveItem.setEnabled(false);
+            return;
+        }
+
+        Path dir = crocodileView.getModel().getDirectoryAt(row);
+        boolean enabled = !isDirectoryEmpty(dir);
+
+        moveItem.setEnabled(enabled);
     }
 
     /* -------------------------------------------------

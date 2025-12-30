@@ -21,6 +21,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
 import org.ln.noor.directory.CrocodileController;
@@ -119,7 +120,7 @@ public class CrocodileView extends JFrame {
         popupMenu.add(menuDeleteIntermediateDir);
         
         table.setComponentPopupMenu(popupMenu);
-        table.addMouseListener(new TableRowSelectionMouseListener(table));
+        table.addMouseListener(new TableRowSelectionMouseListener(table, controller));
 	}
 
 
@@ -340,6 +341,12 @@ public class CrocodileView extends JFrame {
 	public int getSelectedRow() {
 		return table.getSelectedRow();
 	}
-
+	
+	
+	public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            new CrocodileView().setVisible(true);
+        });
+	}
 
 }
