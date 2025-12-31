@@ -1,7 +1,5 @@
 package org.ln.noor.directory.view;
 
-
-
 import java.awt.Dimension;
 import java.awt.Image;
 import java.net.URL;
@@ -36,7 +34,7 @@ import net.miginfocom.swing.MigLayout;
 /**
  * Swing-based UI for managing directory operations such as creation, renaming,
  * reordering, and flattening.
- *
+ * 
  * @author Luca Noale
  */
 @SuppressWarnings("serial")
@@ -244,8 +242,6 @@ public class DirectoryToolView extends JFrame {
         setLocationRelativeTo(null);
         setSize(600, 600);
         pack();
-
-        System.out.println(getSize());
     }
 
 
@@ -465,12 +461,12 @@ public class DirectoryToolView extends JFrame {
         public int getSelectedRow() {
                 return table.getSelectedRow();
         }
-	
-	
-	public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            new DirectoryToolView().setVisible(true);
-        });
-	}
+
+
+        public static void main(String[] args) {
+        	SwingUtilities.invokeLater(() -> {
+        		new DirectoryToolView().setVisible(true);
+        	});
+        }
 
 }
