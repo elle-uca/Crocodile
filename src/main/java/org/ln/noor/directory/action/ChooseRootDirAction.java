@@ -3,13 +3,13 @@ package org.ln.noor.directory.action;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import org.ln.noor.directory.CrocodileController;
+import org.ln.noor.directory.DirectoryToolController;
 
 public class ChooseRootDirAction implements ActionListener {
 
-    private final CrocodileController controller;
+    private final DirectoryToolController controller;
 
-    public ChooseRootDirAction(CrocodileController controller) {
+    public ChooseRootDirAction(DirectoryToolController controller) {
         this.controller = controller;
     }
 

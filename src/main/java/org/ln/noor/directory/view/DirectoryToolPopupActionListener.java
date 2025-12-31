@@ -5,19 +5,19 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JMenuItem;
 
-import org.ln.noor.directory.CrocodileController;
+import org.ln.noor.directory.DirectoryToolController;
 
 /**
  * Handles popup menu actions for the Crocodile table.
  */
-public class CrocodilePopupActionListener implements ActionListener {
+public class DirectoryToolPopupActionListener implements ActionListener {
 
-    private final CrocodileView view;
-    private final CrocodileController controller;
+    private final DirectoryToolView view;
+    private final DirectoryToolController controller;
 
-    public CrocodilePopupActionListener(
-            CrocodileView view,
-            CrocodileController controller) {
+    public DirectoryToolPopupActionListener(
+            DirectoryToolView view,
+            DirectoryToolController controller) {
         this.view = view;
         this.controller = controller;
     }

@@ -5,7 +5,7 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JTable;
 
-import org.ln.noor.directory.CrocodileController;
+import org.ln.noor.directory.DirectoryToolController;
 
 /**
  * Ensures row selection follows mouse clicks.
@@ -13,9 +13,9 @@ import org.ln.noor.directory.CrocodileController;
 public class TableRowSelectionMouseListener extends MouseAdapter {
 
     private final JTable table;
-    private final CrocodileController controller;
+    private final DirectoryToolController controller;
 
-    public TableRowSelectionMouseListener(JTable table, CrocodileController controller) {
+    public TableRowSelectionMouseListener(JTable table, DirectoryToolController controller) {
         this.table = table;
         this.controller = controller;
     }

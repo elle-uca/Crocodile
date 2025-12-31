@@ -17,14 +17,14 @@ import org.ln.noor.directory.service.DirectoryReorderService.ReorderPlan;
 import org.ln.noor.directory.service.DirectoryStatsService;
 import org.ln.noor.directory.service.FilesystemService;
 import org.ln.noor.directory.util.DirectoryUtils;
-import org.ln.noor.directory.view.CrocodileView;
+import org.ln.noor.directory.view.DirectoryToolView;
 import org.ln.noor.directory.view.FileNameDialog;
 import org.ln.noor.directory.view.dialog.FlattenDirectoryDialog;
 import org.ln.noor.directory.view.dialog.ReorderDirectoryDialog;
 
-public class CrocodileController {
+public class DirectoryToolController {
 
-    private final CrocodileView crocodileView;
+    private final DirectoryToolView crocodileView;
     private final DirectoryStatsService statsService;
 
     private static final Preferences prefs =
@@ -38,7 +38,7 @@ public class CrocodileController {
             new FilesystemService();
 
 
-    public CrocodileController(CrocodileView crocodileView) {
+    public DirectoryToolController(DirectoryToolView crocodileView) {
         this.crocodileView = crocodileView;
         this.statsService = new DirectoryStatsService();
     }

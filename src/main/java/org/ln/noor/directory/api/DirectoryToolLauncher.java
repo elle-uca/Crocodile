@@ -4,7 +4,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
-import org.ln.noor.directory.view.CrocodileView;
+import org.ln.noor.directory.view.DirectoryToolView;
 
 public final class DirectoryToolLauncher {
 
@@ -12,13 +12,13 @@ public final class DirectoryToolLauncher {
 
     public static void open() {
         SwingUtilities.invokeLater(() -> {
-            new CrocodileView().setVisible(true);
+            new DirectoryToolView().setVisible(true);
         });
     }
     
     
     public static void openModal(JFrame owner) {
-        CrocodileView view = new CrocodileView();
+        DirectoryToolView view = new DirectoryToolView();
 
         JDialog dialog = new JDialog(owner, "Directory Tool", true);
         dialog.setContentPane(view.getContentPane());

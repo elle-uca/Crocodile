@@ -25,7 +25,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
-import org.ln.noor.directory.CrocodileController;
+import org.ln.noor.directory.DirectoryToolController;
 import org.ln.noor.directory.action.ChooseRootDirAction;
 import org.ln.noor.directory.action.ExecuteAction;
 import org.ln.noor.directory.action.RefreshSearchAction;
@@ -38,7 +38,7 @@ import net.miginfocom.swing.MigLayout;
  * @author luke
  */
 @SuppressWarnings("serial")
-public class CrocodileView extends JFrame {
+public class DirectoryToolView extends JFrame {
 	
 
     // Variables declaration                    
@@ -56,7 +56,7 @@ public class CrocodileView extends JFrame {
     private JTextField rootDirField;
     private JTextField searchDirField;
     
-	private CrocodileController controller;
+	private DirectoryToolController controller;
     private List<Path> dirList;
     private String searchDir = "invio";
     private Path selectedDir;
@@ -78,7 +78,7 @@ public class CrocodileView extends JFrame {
     /**
      * Creates new form View
      */
-    public CrocodileView() {
+    public DirectoryToolView() {
 		super("Crocodile");
 		initComponents();
     }
@@ -105,20 +105,20 @@ public class CrocodileView extends JFrame {
         menuDeleteIntermediateDir = new JMenuItem("Delete Intermediate Directory");
   
         menuItemAdd.addActionListener(
-        		new CrocodilePopupActionListener(this, controller));
+        		new DirectoryToolPopupActionListener(this, controller));
         menuItemRename.addActionListener(
-        		new CrocodilePopupActionListener(this, controller));
+        		new DirectoryToolPopupActionListener(this, controller));
         menuItemMoveFiles.addActionListener(
-        		new CrocodilePopupActionListener(this, controller));
+        		new DirectoryToolPopupActionListener(this, controller));
         menuItemDeleteDir.addActionListener(
-        		new CrocodilePopupActionListener(this, controller));
+        		new DirectoryToolPopupActionListener(this, controller));
         menuDeleteIntermediateDir.addActionListener(
-        		new CrocodilePopupActionListener(this, controller));
+        		new DirectoryToolPopupActionListener(this, controller));
         
         menuItemReorder = new JMenuItem("Reorder Directory...");
         popupMenu.add(menuItemReorder);
         menuItemReorder.addActionListener(
-        		new CrocodilePopupActionListener(this, controller));
+        		new DirectoryToolPopupActionListener(this, controller));
        
         popupMenu.add(menuItemAdd);
         popupMenu.add(menuItemRename);       
@@ -141,7 +141,7 @@ public class CrocodileView extends JFrame {
      * 
      */
     private void initComponents() {
-    	controller = new CrocodileController(this);
+    	controller = new DirectoryToolController(this);
     	dirList = new ArrayList<Path>();
     	
         searchDirField = new JTextField();
@@ -225,7 +225,7 @@ public class CrocodileView extends JFrame {
         panel.add(infoLabel, 		"cell 0 5 4 1, growx");
         
        
-        URL iconUrl = CrocodileView.class
+        URL iconUrl = DirectoryToolView.class
                 .getClassLoader()
                 .getResource("icons/croc.png");
 
@@ -367,7 +367,7 @@ public class CrocodileView extends JFrame {
 	
 	public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            new CrocodileView().setVisible(true);
+            new DirectoryToolView().setVisible(true);
         });
 	}
 

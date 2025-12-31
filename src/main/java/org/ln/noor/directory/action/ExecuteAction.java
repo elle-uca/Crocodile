@@ -5,13 +5,13 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JOptionPane;
 
-import org.ln.noor.directory.CrocodileController;
+import org.ln.noor.directory.DirectoryToolController;
 
 public class ExecuteAction implements ActionListener {
 
-    private final CrocodileController controller;
+    private final DirectoryToolController controller;
 
-    public ExecuteAction(CrocodileController controller) {
+    public ExecuteAction(DirectoryToolController controller) {
         this.controller = controller;
     }
 

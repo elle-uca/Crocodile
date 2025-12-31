@@ -3,13 +3,13 @@ package org.ln.noor.directory.action;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import org.ln.noor.directory.CrocodileController;
+import org.ln.noor.directory.DirectoryToolController;
 
 public class RefreshSearchAction implements ActionListener {
 
-    private final CrocodileController controller;
+    private final DirectoryToolController controller;
 
-    public RefreshSearchAction(CrocodileController controller) {
+    public RefreshSearchAction(DirectoryToolController controller) {
         this.controller = controller;
     }
 
