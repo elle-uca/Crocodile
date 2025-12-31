@@ -5,14 +5,28 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+/**
+ * Moves all items from a directory into its parent, resolving conflicts by strategy.
+ */
 public class DirectoryFlattenService {
 
+    /**
+     * Strategies to use when a file name conflict occurs during flattening.
+     */
     public enum ConflictStrategy {
         ABORT,
         SKIP,
         RENAME
     }
 
+    /**
+     * Flattens a directory into its parent directory.
+     *
+     * @param dir       directory to flatten
+     * @param strategy  conflict resolution strategy when names already exist
+     * @throws IOException              if moving or deleting items fails
+     * @throws IllegalArgumentException if the provided path is invalid
+     */
     public void flatten(Path dir, ConflictStrategy strategy) throws IOException {
 
         if (dir == null || !Files.isDirectory(dir)) {
@@ -37,6 +51,7 @@ public class DirectoryFlattenService {
                                 "Name conflict: " + target.getFileName()
                         );
                         case SKIP -> {
+                            // Skip moving this entry when skipping conflicts
                             continue itemLoop;
                         }
                         case RENAME -> {
@@ -52,6 +67,12 @@ public class DirectoryFlattenService {
         Files.delete(dir);
     }
 
+    /**
+     * Resolves a new path by appending incremental suffixes until a free name is found.
+     *
+     * @param target original conflicting target
+     * @return path with a non-conflicting name
+     */
     private Path resolveRename(Path target) {
         Path parent = target.getParent();
         String name = target.getFileName().toString();

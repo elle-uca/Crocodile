@@ -39,6 +39,7 @@ public class DirectoryStatsService {
         DirStats stats = new DirStats();
 
         Files.walk(root).forEach(p -> {
+            // Skip counting the root directory itself
             if (p.equals(root)) return;
 
             if (Files.isDirectory(p)) {
@@ -55,8 +56,13 @@ public class DirectoryStatsService {
      *  Value object
      * ------------------------- */
 
+    /**
+     * Simple container for directory statistics.
+     */
     public static class DirStats {
+        /** total number of files encountered */
         public int files;
+        /** total number of directories encountered */
         public int directories;
 
         @Override

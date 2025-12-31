@@ -70,8 +70,8 @@ public class DirectoryReorderService {
 
         /*
          * CASE 1
-         * Reference == root operativa (es: "uno")
-         * → si sposta l'intera root operativa
+         * Reference matches the operation root (e.g. "uno")
+         * → move the entire operation root
          */
         if (reference.equals(rootName)) {
 
@@ -95,21 +95,21 @@ public class DirectoryReorderService {
 
         /*
          * CASE 2
-         * Reference è un segmento sotto la root operativa
-         * → si sposta l'intero ramo identificato da reference
+         * Reference is a segment below the operation root
+         * → move the entire branch identified by reference
          */
 
-        // Path relativo alla root operativa
+        // Path relative to the operation root
         Path rel = operationRoot.relativize(selectedPath);
 
-        // Trova l'indice del segmento di riferimento
+        // Find the index of the reference segment
         int refIndex = indexOf(rel, reference);
         if (refIndex < 0) {
             throw new IllegalArgumentException(
                     "Reference segment not found: " + reference);
         }
 
-        // Directory che verrà realmente spostata
+        // Directory that will actually be moved
         Path operatedDir = operationRoot.resolve(
                 rel.subpath(0, refIndex + 1)
         ).normalize().toAbsolutePath();
@@ -133,6 +133,13 @@ public class DirectoryReorderService {
 
     /* ----------------------------------------------------- */
 
+    /**
+     * Finds the index of a segment within a relative path.
+     *
+     * @param rel     relative path to inspect
+     * @param segment path segment to locate
+     * @return index of the segment, or -1 if not found
+     */
     private int indexOf(Path rel, String segment) {
         for (int i = 0; i < rel.getNameCount(); i++) {
             if (rel.getName(i).toString().equals(segment)) {
