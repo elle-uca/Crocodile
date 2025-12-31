@@ -15,6 +15,12 @@ public class DirectoryToolPopupActionListener implements ActionListener {
     private final DirectoryToolView view;
     private final DirectoryToolController controller;
 
+    /**
+     * Creates a listener that dispatches menu actions to the controller.
+     *
+     * @param view        source view containing the popup menu
+     * @param controller  controller used to execute directory operations
+     */
     public DirectoryToolPopupActionListener(
             DirectoryToolView view,
             DirectoryToolController controller) {
@@ -38,11 +44,11 @@ public class DirectoryToolPopupActionListener implements ActionListener {
 
         } else if (item == view.getMenuItemDeleteDir()) {
             controller.deleteSelectedDirectory();
-            
+
         }else if (item == view.getMenuItemReorder()) {
             controller.reorderSelectedDirectory();
         }
-        
+
         else if (item == view.getMenuDeleteIntermediateDir()) {
             controller.flattenSelectedDirectory();
         }

@@ -4,6 +4,9 @@ import javax.swing.*;
 
 import org.ln.noor.directory.service.DirectoryFlattenService.ConflictStrategy;
 
+/**
+ * Dialog prompting the user for conflict resolution strategy when flattening a directory.
+ */
 @SuppressWarnings("serial")
 public class FlattenDirectoryDialog extends JDialog {
 
@@ -16,6 +19,13 @@ public class FlattenDirectoryDialog extends JDialog {
     private final JRadioButton skipBtn  = new JRadioButton("Salta elementi duplicati");
     private final JRadioButton renameBtn= new JRadioButton("Rinomina automaticamente");
 
+    /**
+     * Creates a modal dialog describing the flatten operation and possible strategies.
+     *
+     * @param owner      parent frame used for modality and positioning
+     * @param dirName    name of the directory being removed
+     * @param parentName target directory receiving the contents
+     */
     public FlattenDirectoryDialog(JFrame owner, String dirName, String parentName) {
         super(owner, "Cancella directory intermedia", true);
 
@@ -57,10 +67,20 @@ public class FlattenDirectoryDialog extends JDialog {
         setLocationRelativeTo(owner);
     }
 
+    /**
+     * Returns the result of the dialog after user interaction.
+     *
+     * @return {@link #RET_OK} if confirmed, otherwise {@link #RET_CANCEL}
+     */
     public int getReturnStatus() {
         return status;
     }
 
+    /**
+     * Returns the conflict strategy chosen by the user for duplicate entries.
+     *
+     * @return selected conflict handling strategy
+     */
     public ConflictStrategy getStrategy() {
         if (renameBtn.isSelected()) return ConflictStrategy.RENAME;
         if (skipBtn.isSelected()) return ConflictStrategy.SKIP;

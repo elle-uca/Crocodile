@@ -34,8 +34,8 @@ import org.ln.noor.directory.service.DirectoryStatsService;
 import net.miginfocom.swing.MigLayout;
 
 /**
- *
- * @author luke
+ * Swing-based UI for managing directory operations such as creation, renaming,
+ * reordering, and flattening.
  */
 @SuppressWarnings("serial")
 public class DirectoryToolView extends JFrame {
@@ -76,15 +76,15 @@ public class DirectoryToolView extends JFrame {
     private JMenuItem menuItemReorder;
     
     /**
-     * Creates new form View
+     * Builds the main application window and initializes all components.
      */
     public DirectoryToolView() {
-		super("Crocodile");
-		initComponents();
+                super("Crocodile");
+                initComponents();
     }
 
     /**
-     * 
+     * Configures the table, model, renderer, and popup menu used to manage directories.
      */
     private void initTable() {
         table = new JTable();
@@ -138,11 +138,11 @@ public class DirectoryToolView extends JFrame {
 
 
     /**
-     * 
+     * Initializes all Swing controls, wiring them to the controller and arranging the layout.
      */
     private void initComponents() {
-    	controller = new DirectoryToolController(this);
-    	dirList = new ArrayList<Path>();
+        controller = new DirectoryToolController(this);
+        dirList = new ArrayList<Path>();
     	
         searchDirField = new JTextField();
         rootDirField = new JTextField();
@@ -242,127 +242,227 @@ public class DirectoryToolView extends JFrame {
         setLocationRelativeTo(null);
         setSize(600, 600);
         pack();
-        
+
         System.out.println(getSize());
-    }            
+    }
 
 
 
     
     // Getters and Setters
     
-	public List<Path> getDirList() {
-		return dirList;
-	}
+        /**
+         * Returns the current list of directories shown in the UI.
+         *
+         * @return list of directories managed by the tool
+         */
+        public List<Path> getDirList() {
+                return dirList;
+        }
 
-	public void setDirList(List<Path> dirList) {
-		this.dirList = dirList;
-	}
+        /**
+         * Replaces the list of directories managed by the view.
+         *
+         * @param dirList new directory list
+         */
+        public void setDirList(List<Path> dirList) {
+                this.dirList = dirList;
+        }
 
-	public String getSearchDir() {
-		return searchDir;
-	}
+        /**
+         * Returns the search string used to filter directories.
+         *
+         * @return current search value
+         */
+        public String getSearchDir() {
+                return searchDir;
+        }
 
-	public void setSearchDir(String searchDir) {
-		this.searchDir = searchDir;
-	}
+        /**
+         * Updates the search filter used by the controller.
+         *
+         * @param searchDir new search value
+         */
+        public void setSearchDir(String searchDir) {
+                this.searchDir = searchDir;
+        }
 
-	public Path getSelectedDir() {
-		return selectedDir;
-	}
+        /**
+         * Returns the directory currently selected in the table.
+         *
+         * @return selected directory path
+         */
+        public Path getSelectedDir() {
+                return selectedDir;
+        }
 
-	public void setSelectedDir(Path selectedDir) {
-		this.selectedDir = selectedDir;
-	}
+        /**
+         * Updates the selected directory tracked by the view.
+         *
+         * @param selectedDir directory corresponding to the current selection
+         */
+        public void setSelectedDir(Path selectedDir) {
+                this.selectedDir = selectedDir;
+        }
 
-	public DirectoryTableModel getModel() {
-		return model;
-	}
+        /**
+         * Provides access to the table model showing directories.
+         *
+         * @return table model instance
+         */
+        public DirectoryTableModel getModel() {
+                return model;
+        }
 
-	public JTextField getRootDirField() {
-		return rootDirField;
-	}
+        /**
+         * Returns the text field that holds the root directory path.
+         *
+         * @return root directory text field
+         */
+        public JTextField getRootDirField() {
+                return rootDirField;
+        }
 
-	public JTextField getSearchDirField() {
-		return searchDirField;
-	}
+        /**
+         * Returns the text field used for directory searches.
+         *
+         * @return search text field
+         */
+        public JTextField getSearchDirField() {
+                return searchDirField;
+        }
 
-	public JRadioButton getEmptyButton() {
-		return emptyButton;
-	}
+        /**
+         * Returns the option indicating that directories should be emptied.
+         *
+         * @return radio button representing the "empty" action
+         */
+        public JRadioButton getEmptyButton() {
+                return emptyButton;
+        }
 
-	public JRadioButton getCancelButton() {
-		return cancelButton;
-	}
+        /**
+         * Returns the option indicating directories should be deleted.
+         *
+         * @return radio button representing the "delete" action
+         */
+        public JRadioButton getCancelButton() {
+                return cancelButton;
+        }
 
-	public JLabel getReportLabel() {
-		return reportLabel;
-	}
-	
-	
+        /**
+         * Label used to display summary information.
+         *
+         * @return report label
+         */
+        public JLabel getReportLabel() {
+                return reportLabel;
+        }
 
-	public JLabel getInfoLabel() {
-		return infoLabel;
-	}
 
-	public JButton getActionButton() {
-		return actionButton;
-	}
 
-	public JButton getSearchDirButton() {
-		return searchDirButton;
-	}
+        /**
+         * Label used for contextual feedback.
+         *
+         * @return info label
+         */
+        public JLabel getInfoLabel() {
+                return infoLabel;
+        }
 
-	public JMenuItem getMenuItemReorder() {
-	    return menuItemReorder;
-	}
+        /**
+         * Main action button that triggers the selected operation.
+         *
+         * @return action button
+         */
+        public JButton getActionButton() {
+                return actionButton;
+        }
+
+        /**
+         * Button that refreshes the search results.
+         *
+         * @return search refresh button
+         */
+        public JButton getSearchDirButton() {
+                return searchDirButton;
+        }
+
+        /**
+         * Menu item that opens the reorder dialog.
+         *
+         * @return reorder menu item
+         */
+        public JMenuItem getMenuItemReorder() {
+            return menuItemReorder;
+        }
 
     /**
-	 * @return the menuDeleteIntermediateDir
-	 */
-	public JMenuItem getMenuDeleteIntermediateDir() {
-		return menuDeleteIntermediateDir;
-	}
+         * Menu item that triggers directory flattening.
+         *
+         * @return intermediate-directory deletion menu item
+         */
+        public JMenuItem getMenuDeleteIntermediateDir() {
+                return menuDeleteIntermediateDir;
+        }
 
-	/**
-	 * @return the table
-	 */
-	public JTable getTable() {
-		return table;
-	}
+        /**
+         * Table instance displayed in the UI.
+         *
+         * @return directory table
+         */
+        public JTable getTable() {
+                return table;
+        }
 
-	/**
-	 * @return the menuItemAdd
-	 */
-	public JMenuItem getMenuItemAdd() {
-		return menuItemAdd;
-	}
+        /**
+         * Menu item that adds a new directory below the selection.
+         *
+         * @return add-directory menu item
+         */
+        public JMenuItem getMenuItemAdd() {
+                return menuItemAdd;
+        }
 
-	/**
-	 * @return the menuItemRename
-	 */
-	public JMenuItem getMenuItemRename() {
-		return menuItemRename;
-	}
-	
-	public JMenuItem getMenuItemMoveFiles() {
-	    return menuItemMoveFiles;
-	}
-	
-	public JMenuItem getMenuItemDeleteDir() {
-	    return menuItemDeleteDir;
-	}
-	
-	// Delegate methods
+        /**
+         * Menu item used to rename the selected directory.
+         *
+         * @return rename menu item
+         */
+        public JMenuItem getMenuItemRename() {
+                return menuItemRename;
+        }
+
+        /**
+         * Menu item that moves files out of the selected directory.
+         *
+         * @return move-files menu item
+         */
+        public JMenuItem getMenuItemMoveFiles() {
+            return menuItemMoveFiles;
+        }
+
+        /**
+         * Menu item that deletes the currently selected directory.
+         *
+         * @return delete-directory menu item
+         */
+        public JMenuItem getMenuItemDeleteDir() {
+            return menuItemDeleteDir;
+        }
+
+        // Delegate methods
 
 
-	/**
-	 * @return
-	 * @see javax.swing.JTable#getSelectedRow()
-	 */
-	public int getSelectedRow() {
-		return table.getSelectedRow();
-	}
+        /**
+         * Returns the index of the selected row in the directory table.
+         *
+         * @return selected row index
+         * @see javax.swing.JTable#getSelectedRow()
+         */
+        public int getSelectedRow() {
+                return table.getSelectedRow();
+        }
 	
 	
 	public static void main(String[] args) {
