@@ -15,6 +15,12 @@ public class TableRowSelectionMouseListener extends MouseAdapter {
     private final JTable table;
     private final DirectoryToolController controller;
 
+    /**
+     * Builds a listener that updates table selection and controller state on click.
+     *
+     * @param table       table whose rows should be selected when clicked
+     * @param controller  controller notified after selection changes
+     */
     public TableRowSelectionMouseListener(JTable table, DirectoryToolController controller) {
         this.table = table;
         this.controller = controller;

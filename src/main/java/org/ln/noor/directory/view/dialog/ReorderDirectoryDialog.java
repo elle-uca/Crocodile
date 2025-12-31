@@ -16,6 +16,9 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
+/**
+ * Dialog used to insert a new directory before or after a selected path segment.
+ */
 @SuppressWarnings("serial")
 public class ReorderDirectoryDialog extends JDialog {
 
@@ -30,16 +33,22 @@ public class ReorderDirectoryDialog extends JDialog {
     private final JComboBox<String> segmentBox;
 
     /**
-     * Root operativa dell'app (es: /home/luke/ren)
+     * Root directory configured for operations (e.g. /home/luke/ren).
      */
     private final Path operationRoot;
 
     /**
-     * Directory selezionata nella tabella
-     * (es: /home/luke/ren/primaditest)
+     * Directory selected in the table (e.g. /home/luke/ren/primaditest).
      */
     private final Path selectedDir;
 
+    /**
+     * Builds a modal dialog that allows the user to insert a directory relative to another.
+     *
+     * @param owner          parent frame used for modality and positioning
+     * @param operationRoot  base directory of the reordering operation
+     * @param selectedDir    directory currently selected by the user
+     */
     public ReorderDirectoryDialog(
             JFrame owner,
             Path operationRoot,
@@ -106,15 +115,12 @@ public class ReorderDirectoryDialog extends JDialog {
     }
 
     /**
-     * Costruisce i segmenti RIORDINABILI:
+     * Builds the list of reorderable path segments relative to the operation root.
      *
+     * For example:
      * operationRoot = /home/luke/ren
      * selectedDir   = /home/luke/ren/primaditest/xyz
-     *
-     * Combo:
-     *   ren
-     *   primaditest
-     *   xyz
+     * produces the combo entries: ren, primaditest, xyz.
      */
     private String[] buildSegments() {
 
@@ -124,10 +130,10 @@ public class ReorderDirectoryDialog extends JDialog {
 
         List<String> segments = new ArrayList<>();
 
-        // 1) SEMPRE il nome della root operativa (ren)
+        // Always include the operation root name first (e.g. "ren")
         segments.add(operationRoot.getFileName().toString());
 
-        // 2) Segmenti sotto la root operativa
+        // Then include each segment under the operation root
         if (!selectedDir.equals(operationRoot)) {
             Path rel = operationRoot.relativize(selectedDir);
             for (int i = 0; i < rel.getNameCount(); i++) {
@@ -140,18 +146,38 @@ public class ReorderDirectoryDialog extends JDialog {
 
     // ---- getters ----
 
+    /**
+     * Returns the dialog result after user confirmation or cancellation.
+     *
+     * @return {@link #RET_OK} if confirmed, otherwise {@link #RET_CANCEL}
+     */
     public int getReturnStatus() {
         return returnStatus;
     }
 
+    /**
+     * Returns the directory name the user wants to insert.
+     *
+     * @return trimmed directory name to insert
+     */
     public String getInsertedSegment() {
         return insertField.getText().trim();
     }
 
+    /**
+     * Indicates whether the new directory should be placed before the reference segment.
+     *
+     * @return {@code true} if insertion should occur before, otherwise after
+     */
     public boolean isInsertBefore() {
         return beforeBtn.isSelected();
     }
 
+    /**
+     * Returns the segment selected as the placement reference.
+     *
+     * @return selected reference segment
+     */
     public String getReferenceSegment() {
         return (String) segmentBox.getSelectedItem();
     }

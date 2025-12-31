@@ -7,11 +7,14 @@ import java.io.File;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
+/**
+ * Custom cell renderer that highlights leaf directories and shows child counts.
+ */
 @SuppressWarnings("serial")
 public class DirectoryCellRenderer extends DefaultTableCellRenderer {
 
-    private static final Color LEAF_BG = new Color(220, 255, 220); // verde chiaro
-    private static final Color LEAF_FG = new Color(0, 128, 0);     // verde scuro
+    private static final Color LEAF_BG = new Color(220, 255, 220); // light green background
+    private static final Color LEAF_FG = new Color(0, 128, 0);     // dark green text
 
     @Override
     public Component getTableCellRendererComponent(
@@ -25,17 +28,17 @@ public class DirectoryCellRenderer extends DefaultTableCellRenderer {
         Component c = super.getTableCellRendererComponent(
                 table, value, isSelected, hasFocus, row, column);
 
-        // NON alterare selezione
+        // Do not alter selection highlighting handled by JTable
         if (isSelected) {
             setToolTipText(null);
             return c;
         }
 
-        // Reset colori
+        // Reset to default colors before applying custom styling
         c.setForeground(table.getForeground());
         c.setBackground(table.getBackground());
 
-        // Recupero File della riga (colonna 0 = path)
+        // Retrieve the row path (column 0 holds the directory path)
         Object rowObj = table.getModel().getValueAt(row, 0);
         if (!(rowObj instanceof String path)) {
             setToolTipText(null);
@@ -48,7 +51,7 @@ public class DirectoryCellRenderer extends DefaultTableCellRenderer {
             return c;
         }
 
-        // Conteggio file / directory
+        // Count how many files and directories exist directly under the path
         int fileCount = 0;
         int dirCount = 0;
 
@@ -63,14 +66,14 @@ public class DirectoryCellRenderer extends DefaultTableCellRenderer {
             }
         }
 
-        // Tooltip
+        // Build a tooltip summarizing the child counts
         if (fileCount == 0 && dirCount == 0) {
             setToolTipText("Directory vuota");
         } else {
             setToolTipText(fileCount + " file, " + dirCount + " directory");
         }
 
-        // Evidenzia directory foglia (nessuna sottodirectory)
+        // Highlight leaf directories that contain no subdirectories
         if (dirCount == 0) {
             c.setBackground(LEAF_BG);
             c.setForeground(LEAF_FG);

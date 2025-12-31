@@ -22,8 +22,7 @@ import javax.swing.KeyStroke;
 import net.miginfocom.swing.MigLayout;
 
 /**
- *
- * @author luke
+ * Modal dialog that prompts the user for a filename.
  */
 @SuppressWarnings("serial")
 public class FileNameDialog extends JDialog {
@@ -44,18 +43,21 @@ public class FileNameDialog extends JDialog {
 
 	private int returnStatus = RET_CANCEL;
 
-	/**
-	 * Creates new form FileNameDialog
-	 */
-	public FileNameDialog(Frame parent, String text) {
-		super(parent, true);
-		initComponents();
-		textField.setText(text);
+        /**
+         * Creates a new dialog centered on the parent frame and pre-fills the input field.
+         *
+         * @param parent owner frame used for modality and positioning
+         * @param text   initial text to populate in the filename field
+         */
+        public FileNameDialog(Frame parent, String text) {
+                super(parent, true);
+                initComponents();
+                textField.setText(text);
 
-		// Close the dialog when Esc is pressed
-		String cancelName = "cancel";
-		InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
+                // Close the dialog when Esc is pressed
+                String cancelName = "cancel";
+                InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+                inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
 		ActionMap actionMap = getRootPane().getActionMap();
 		actionMap.put(cancelName, new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
@@ -65,12 +67,14 @@ public class FileNameDialog extends JDialog {
 		setLocationRelativeTo(parent);
 	}
 
-	/**
-	 * @return the return status of this dialog - one of RET_OK or RET_CANCEL
-	 */
-	public int getReturnStatus() {
-		return returnStatus;
-	}
+        /**
+         * Returns the user choice for this dialog.
+         *
+         * @return {@link #RET_OK} when confirmed or {@link #RET_CANCEL} when cancelled
+         */
+        public int getReturnStatus() {
+                return returnStatus;
+        }
 
 
 
@@ -128,16 +132,16 @@ public class FileNameDialog extends JDialog {
 		doClose(RET_CANCEL);
 	}                                            
 
-	/**
-	 * Closes the dialog
-	 */
-	private void closeDialog(WindowEvent evt) {                             
-		doClose(RET_CANCEL);
-	}                            
+        /**
+         * Closes the dialog when the window close event is triggered.
+         */
+        private void closeDialog(WindowEvent evt) {
+                doClose(RET_CANCEL);
+        }
 
-	private void textFieldActionPerformed(ActionEvent evt) {                                          
-		// TODO add your handling code here:
-	}                                         
+        private void textFieldActionPerformed(ActionEvent evt) {
+                // No additional handling required when Enter is pressed in the text field
+        }
 
 	private void doClose(int retStatus) {
 		returnStatus = retStatus;
@@ -146,12 +150,14 @@ public class FileNameDialog extends JDialog {
 
 	}
 
-	/**
-	 * @return the textField
-	 */
-	public String getText() {
-		return textField.getText();
-	}
+        /**
+         * Retrieves the text currently entered in the dialog field.
+         *
+         * @return filename typed by the user
+         */
+        public String getText() {
+                return textField.getText();
+        }
 
 
 }
