@@ -10,6 +10,8 @@ import java.util.Objects;
  *
  * No Swing.
  * No filesystem operations.
+ *
+ * @author Luca Noale
  */
 public class DirectoryReorderService {
 
@@ -18,6 +20,8 @@ public class DirectoryReorderService {
      *
      * @param operatedDir directory that will be physically moved
      * @param targetDir   final absolute target path of operatedDir
+     *
+     * @author Luca Noale
      */
     public record ReorderPlan(
             Path operatedDir,

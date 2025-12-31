@@ -25,6 +25,8 @@ import org.ln.noor.directory.view.dialog.ReorderDirectoryDialog;
 /**
  * Coordinates UI interactions for directory operations such as scanning,
  * deletion, moving, and reordering.
+ *
+ * @author Luca Noale
  */
 public class DirectoryToolController {
 

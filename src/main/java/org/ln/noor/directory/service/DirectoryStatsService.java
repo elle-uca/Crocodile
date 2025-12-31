@@ -6,6 +6,8 @@ import java.nio.file.Path;
 
 /**
  * Provides statistics about directories.
+ *
+ * @author Luca Noale
  */
 public class DirectoryStatsService {
 
@@ -58,6 +60,8 @@ public class DirectoryStatsService {
 
     /**
      * Simple container for directory statistics.
+     *
+     * @author Luca Noale
      */
     public static class DirStats {
         /** total number of files encountered */

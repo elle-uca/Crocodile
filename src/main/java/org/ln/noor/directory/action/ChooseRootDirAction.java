@@ -7,6 +7,8 @@ import org.ln.noor.directory.DirectoryToolController;
 
 /**
  * Action that opens a dialog for selecting the root directory.
+ *
+ * @author Luca Noale
  */
 public class ChooseRootDirAction implements ActionListener {
 

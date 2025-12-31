@@ -9,6 +9,8 @@ import org.ln.noor.directory.DirectoryToolController;
 
 /**
  * Ensures row selection follows mouse clicks.
+ *
+ * @author Luca Noale
  */
 public class TableRowSelectionMouseListener extends MouseAdapter {
 

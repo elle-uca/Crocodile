@@ -5,6 +5,8 @@ import java.util.Objects;
 
 /**
  * Utilities for Path manipulation.
+ *
+ * @author Luca Noale
  */
 public final class PathUtils {
 

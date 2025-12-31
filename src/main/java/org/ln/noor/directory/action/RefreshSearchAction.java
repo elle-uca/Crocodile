@@ -7,6 +7,8 @@ import org.ln.noor.directory.DirectoryToolController;
 
 /**
  * Action that restarts the search process in the directory tool.
+ *
+ * @author Luca Noale
  */
 public class RefreshSearchAction implements ActionListener {
 

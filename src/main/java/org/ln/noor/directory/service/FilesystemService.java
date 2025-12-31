@@ -6,6 +6,8 @@ import java.nio.file.Path;
 
 /**
  * Performs basic filesystem operations with minimal safeguards.
+ *
+ * @author Luca Noale
  */
 public class FilesystemService {
 

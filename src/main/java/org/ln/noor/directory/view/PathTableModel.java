@@ -11,6 +11,8 @@ import javax.swing.table.AbstractTableModel;
 
 /**
  * TableModel for displaying directories based on java.nio.file.Path.
+ *
+ * @author Luca Noale
  */
 @SuppressWarnings("serial")
 public class PathTableModel extends AbstractTableModel implements Serializable {

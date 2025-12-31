@@ -9,6 +9,8 @@ import org.ln.noor.directory.DirectoryToolController;
 
 /**
  * Action that confirms and triggers the main directory operation.
+ *
+ * @author Luca Noale
  */
 public class ExecuteAction implements ActionListener {
 
