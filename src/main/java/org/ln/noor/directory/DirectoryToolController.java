@@ -22,6 +22,10 @@ import org.ln.noor.directory.view.FileNameDialog;
 import org.ln.noor.directory.view.dialog.FlattenDirectoryDialog;
 import org.ln.noor.directory.view.dialog.ReorderDirectoryDialog;
 
+/**
+ * Coordinates UI interactions for directory operations such as scanning,
+ * deletion, moving, and reordering.
+ */
 public class DirectoryToolController {
 
     private final DirectoryToolView crocodileView;
@@ -38,6 +42,11 @@ public class DirectoryToolController {
             new FilesystemService();
 
 
+    /**
+     * Creates a controller bound to the provided view instance.
+     *
+     * @param crocodileView the view component backing the controller
+     */
     public DirectoryToolController(DirectoryToolView crocodileView) {
         this.crocodileView = crocodileView;
         this.statsService = new DirectoryStatsService();
@@ -87,6 +96,9 @@ public class DirectoryToolController {
 
 
     
+    /**
+     * Executes a filtered search based on the text field and updates the table.
+     */
     public void refreshSearch() {
         if (crocodileView.getSelectedDir() == null) return;
 
@@ -98,6 +110,9 @@ public class DirectoryToolController {
         crocodileView.getActionButton().setEnabled(true);
     }
 
+    /**
+     * Opens a chooser to pick the root directory and initializes the view state.
+     */
     public void chooseRootDirectory() {
         String lastPath = prefs.get(LAST_DIR_KEY, null);
 
@@ -120,6 +135,9 @@ public class DirectoryToolController {
         crocodileView.getSearchDirButton().setEnabled(true);
     }
 
+    /**
+     * Performs the primary action depending on whether a selection exists.
+     */
     public void executeMainAction() {
 
         if (!confirm("Sei sicuro di procedere?")) return;
@@ -137,6 +155,11 @@ public class DirectoryToolController {
      *  DELETE / EMPTY
      * ------------------------------------------------- */
 
+    /**
+     * Deletes or empties the provided directories according to user settings.
+     *
+     * @param list directories to process
+     */
     public void delete(List<Path> list) {
 
         boolean deleteDir = crocodileView.getCancelButton().isSelected();
@@ -158,6 +181,9 @@ public class DirectoryToolController {
         refreshTable();
     }
 
+    /**
+     * Processes all directories matching the search name under the selected root.
+     */
     public void processAllDirectoriesByName() {
 
         Path root = crocodileView.getSelectedDir();
@@ -183,6 +209,9 @@ public class DirectoryToolController {
      *  MOVE
      * ------------------------------------------------- */
 
+    /**
+     * Moves files or subdirectories from the selected directory to a chosen target.
+     */
     public void moveFilesFromSelectedDir() {
 
         int row = crocodileView.getSelectedRow();
@@ -245,6 +274,12 @@ public class DirectoryToolController {
         refreshTable();
     }
     
+    /**
+     * Checks whether a directory has any entries.
+     *
+     * @param dir directory to inspect
+     * @return {@code true} if the directory is empty or unreadable
+     */
     private boolean isDirectoryEmpty(Path dir) {
         try (var stream = Files.list(dir)) {
             return stream.findAny().isEmpty();
@@ -253,6 +288,9 @@ public class DirectoryToolController {
         }
     }
 
+    /**
+     * Enables or disables the move menu item based on the current selection.
+     */
     public void updateMoveMenuState() {
 
         JMenuItem moveItem = crocodileView.getMenuItemMoveFiles();
@@ -273,6 +311,9 @@ public class DirectoryToolController {
      *  DELETE SINGLE DIRECTORY (popup)
      * ------------------------------------------------- */
 
+    /**
+     * Deletes the selected directory after user confirmation and statistics checks.
+     */
    public  void deleteSelectedDirectory() {
 
         int row = crocodileView.getSelectedRow();
@@ -283,7 +324,7 @@ public class DirectoryToolController {
 
         Path dir = crocodileView.getModel().getDirectoryAt(row);
 
-        // Conferma 1: cancellazione directory
+        // First confirmation: deletion of the directory itself
         int confirmDir = JOptionPane.showConfirmDialog(
                 crocodileView,
                 "Vuoi cancellare la directory?\n\n" + dir.toAbsolutePath(),
@@ -296,7 +337,7 @@ public class DirectoryToolController {
             return;
         }
 
-        // Calcolo statistiche SOLO se non è vuota
+        // Compute statistics only when the directory is not empty
         DirectoryStatsService.DirStats stats;
         try {
             stats = statsService.countRecursive(dir);
@@ -305,7 +346,7 @@ public class DirectoryToolController {
             return;
         }
 
-        // Conferma 2: contenuto
+        // Second confirmation: warn about deleting contents
         if (stats.files > 0 || stats.directories > 0) {
 
             int confirmContent = JOptionPane.showConfirmDialog(
@@ -325,7 +366,7 @@ public class DirectoryToolController {
             }
         }
 
-        // Esecuzione reale
+        // Execute the deletion after confirmations
         try {
             DirectoryUtils.deleteDirectoryRecursively(dir);
         } catch (Exception ex) {
@@ -337,6 +378,9 @@ public class DirectoryToolController {
         crocodileView.getReportLabel().setText("Directory cancellata");
     }
 
+    /**
+     * Removes an intermediate directory by flattening its contents into the parent.
+     */
    public void flattenSelectedDirectory() {
 
 	    int row = crocodileView.getSelectedRow();
@@ -353,9 +397,9 @@ public class DirectoryToolController {
 	        return;
 	    }
 
-	    FlattenDirectoryDialog dlg =
-	            new FlattenDirectoryDialog(
-	                    crocodileView,
+            FlattenDirectoryDialog dlg =
+                    new FlattenDirectoryDialog(
+                            crocodileView,
 	                    dir.getFileName().toString(),
 	                    parent.getFileName().toString()
 	            );
@@ -377,9 +421,12 @@ public class DirectoryToolController {
 
 	    refreshTable();
 	    crocodileView.getReportLabel().setText("Directory intermedia eliminata");
-	}
+        }
 
 
+    /**
+     * Reorders a directory by inserting or replacing a path segment under the root.
+     */
    public void reorderSelectedDirectory() {
 
 	    int row = crocodileView.getSelectedRow();
@@ -408,9 +455,9 @@ public class DirectoryToolController {
 	        return;
 	    }
 
-	    // Dialog SOLO UI
-	    ReorderDirectoryDialog dlg =
-	            new ReorderDirectoryDialog(
+            // Dialog only configures UI inputs
+            ReorderDirectoryDialog dlg =
+                    new ReorderDirectoryDialog(
 	                    crocodileView,
 	                    operationRoot,
 	                    selectedPath
@@ -422,9 +469,9 @@ public class DirectoryToolController {
 	        return;
 	    }
 
-	    // Pianificazione semantica (QUI si decide cosa spostare DAVVERO)
-	    ReorderPlan plan;
-	    try {
+            // Plan the effective move based on dialog input
+            ReorderPlan plan;
+            try {
 	        plan = reorderService.planReorder(
 	                operationRoot,
 	                selectedPath,
@@ -437,10 +484,10 @@ public class DirectoryToolController {
 	        return;
 	    }
 
-	    // Sicurezza: non uscire dalla home utente
-	    Path securityRoot = Path.of(System.getProperty("user.home"))
-	            .normalize()
-	            .toAbsolutePath();
+            // Safety check to keep operations inside the user home directory
+            Path securityRoot = Path.of(System.getProperty("user.home"))
+                    .normalize()
+                    .toAbsolutePath();
 
 	    if (!plan.targetDir().startsWith(securityRoot)) {
 	        showWarning(
@@ -451,18 +498,18 @@ public class DirectoryToolController {
 	        return;
 	    }
 
-	    // La destinazione non deve esistere
-	    if (Files.exists(plan.targetDir())) {
-	        showWarning(
+            // Abort if the target already exists
+            if (Files.exists(plan.targetDir())) {
+                showWarning(
 	                "La directory di destinazione esiste già:\n" +
 	                plan.targetDir()
 	        );
 	        return;
 	    }
 
-	    // Preview onesta
-	    int confirm = JOptionPane.showConfirmDialog(
-	            crocodileView,
+            // Present a final preview before committing the move
+            int confirm = JOptionPane.showConfirmDialog(
+                    crocodileView,
 	            "Verrà spostata la directory:\n\n" +
 	            plan.operatedDir() +
 	            "\n\nNuovo percorso:\n\n" +
@@ -477,22 +524,22 @@ public class DirectoryToolController {
 	        return;
 	    }
 
-	    // Esecuzione reale
-	    try {
-	        filesystemService.move(
-	                plan.operatedDir(),
-	                plan.targetDir()
-	        );
-	    } catch (IOException ex) {
-	        showError("Errore durante lo spostamento", ex);
-	        return;
-	    }
+            // Perform the planned move
+            try {
+                filesystemService.move(
+                        plan.operatedDir(),
+                        plan.targetDir()
+                );
+            } catch (IOException ex) {
+                showError("Errore durante lo spostamento", ex);
+                return;
+            }
 
-	    // 🔁 Se è stata spostata la Root operativa, aggiorno la Root dell'app
-	    if (plan.operatedDir().equals(operationRoot)) {
-	        crocodileView.setSelectedDir(plan.targetDir());
-	        crocodileView.getRootDirField().setText(plan.targetDir().toString());
-	    }
+            // If the operative root changed, synchronize the view root
+            if (plan.operatedDir().equals(operationRoot)) {
+                crocodileView.setSelectedDir(plan.targetDir());
+                crocodileView.getRootDirField().setText(plan.targetDir().toString());
+            }
 
 	    refreshTable();
 	}
@@ -554,6 +601,9 @@ public class DirectoryToolController {
 
 
 
+    /**
+     * Adds a new subdirectory inside the currently selected directory.
+     */
     public void addNewDir() {
         int row = crocodileView.getSelectedRow();
         if (row < 0) {
@@ -588,6 +638,9 @@ public class DirectoryToolController {
         refreshTable();
     }
 
+    /**
+     * Renames the currently selected directory after validation.
+     */
     public void renameCurrentDir() {
 
         int row = crocodileView.getSelectedRow();
@@ -635,6 +688,9 @@ public class DirectoryToolController {
         refreshTable();
     }
 
+    /**
+     * Updates labels and optional actions when a directory row is selected.
+     */
     public void onDirectorySelected() {
 
         int row = crocodileView.getSelectedRow();
