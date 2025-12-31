@@ -7,10 +7,18 @@ import javax.swing.JOptionPane;
 
 import org.ln.noor.directory.DirectoryToolController;
 
+/**
+ * Action that confirms and triggers the main directory operation.
+ */
 public class ExecuteAction implements ActionListener {
 
     private final DirectoryToolController controller;
 
+    /**
+     * Creates the action with a reference to the controller.
+     *
+     * @param controller the controller coordinating the execution
+     */
     public ExecuteAction(DirectoryToolController controller) {
         this.controller = controller;
     }
@@ -26,6 +34,7 @@ public class ExecuteAction implements ActionListener {
                 JOptionPane.WARNING_MESSAGE
         );
 
+        // Proceed only when the user explicitly confirms execution.
         if (confirm == JOptionPane.YES_OPTION) {
             controller.executeMainAction();
         }
