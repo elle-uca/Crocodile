@@ -194,6 +194,10 @@ public final class DirectoryUtils {
     /**
      * Moves only subdirectories (not files) from sourceDir to targetDir.
      * Subdirectories are moved as whole trees.
+     *
+     * @param sourceDir directory whose immediate subdirectories will be moved
+     * @param targetDir destination directory that will receive moved subdirectories
+     * @throws IOException if an I/O error occurs during move
      */
     public static void moveDirectories(Path sourceDir, Path targetDir) throws IOException {
         Objects.requireNonNull(sourceDir);
@@ -213,9 +217,13 @@ public final class DirectoryUtils {
         }
     }
 
-    
+
     /**
      * Moves files and subdirectories from sourceDir to targetDir.
+     *
+     * @param sourceDir directory whose contents will be moved
+     * @param targetDir destination directory that will receive files and subdirectories
+     * @throws IOException if an I/O error occurs during move
      */
     public static void moveAll(Path sourceDir, Path targetDir) throws IOException {
         Objects.requireNonNull(sourceDir);
