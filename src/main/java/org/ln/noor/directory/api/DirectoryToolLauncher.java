@@ -6,20 +6,32 @@ import javax.swing.SwingUtilities;
 
 import org.ln.noor.directory.view.DirectoryToolView;
 
+/**
+ * Utility class that provides entry points for launching the Directory Tool UI.
+ */
 public final class DirectoryToolLauncher {
 
     private DirectoryToolLauncher() {}
 
+    /**
+     * Launches the Directory Tool as a standalone window on the Swing event thread.
+     */
     public static void open() {
         SwingUtilities.invokeLater(() -> {
             new DirectoryToolView().setVisible(true);
         });
     }
-    
-    
+
+
+    /**
+     * Opens the Directory Tool as a modal dialog relative to the provided owner frame.
+     *
+     * @param owner parent frame that owns the modal dialog
+     */
     public static void openModal(JFrame owner) {
         DirectoryToolView view = new DirectoryToolView();
 
+        // Build a modal dialog that hosts the tool's content pane.
         JDialog dialog = new JDialog(owner, "Directory Tool", true);
         dialog.setContentPane(view.getContentPane());
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
