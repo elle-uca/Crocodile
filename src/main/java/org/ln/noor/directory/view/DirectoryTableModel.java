@@ -12,6 +12,8 @@ import org.ln.noor.directory.service.DirectoryStatsService;
 
 /**
  * TableModel for directories only.
+ *
+ * @author Luca Noale
  */
 public class DirectoryTableModel extends AbstractTableModel implements Serializable {
 

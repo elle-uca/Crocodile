@@ -7,11 +7,15 @@ import java.nio.file.Path;
 
 /**
  * Moves all items from a directory into its parent, resolving conflicts by strategy.
+ *
+ * @author Luca Noale
  */
 public class DirectoryFlattenService {
 
     /**
      * Strategies to use when a file name conflict occurs during flattening.
+     *
+     * @author Luca Noale
      */
     public enum ConflictStrategy {
         ABORT,

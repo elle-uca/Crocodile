@@ -23,6 +23,8 @@ import java.util.Objects;
  * Notes:
  * - Does NOT follow symlinks (safer across platforms).
  * - Operations are best-effort with clear exceptions on failures.
+ *
+ * @author Luca Noale
  */
 public final class DirectoryUtils {
 

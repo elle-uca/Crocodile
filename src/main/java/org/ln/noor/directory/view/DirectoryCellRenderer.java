@@ -9,6 +9,8 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 /**
  * Custom cell renderer that highlights leaf directories and shows child counts.
+ *
+ * @author Luca Noale
  */
 @SuppressWarnings("serial")
 public class DirectoryCellRenderer extends DefaultTableCellRenderer {

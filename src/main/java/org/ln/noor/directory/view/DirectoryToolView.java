@@ -36,6 +36,8 @@ import net.miginfocom.swing.MigLayout;
 /**
  * Swing-based UI for managing directory operations such as creation, renaming,
  * reordering, and flattening.
+ *
+ * @author Luca Noale
  */
 @SuppressWarnings("serial")
 public class DirectoryToolView extends JFrame {

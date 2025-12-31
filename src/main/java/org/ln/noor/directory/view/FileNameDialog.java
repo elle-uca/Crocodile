@@ -23,6 +23,8 @@ import net.miginfocom.swing.MigLayout;
 
 /**
  * Modal dialog that prompts the user for a filename.
+ *
+ * @author Luca Noale
  */
 @SuppressWarnings("serial")
 public class FileNameDialog extends JDialog {

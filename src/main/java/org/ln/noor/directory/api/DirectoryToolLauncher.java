@@ -8,6 +8,8 @@ import org.ln.noor.directory.view.DirectoryToolView;
 
 /**
  * Utility class that provides entry points for launching the Directory Tool UI.
+ *
+ * @author Luca Noale
  */
 public final class DirectoryToolLauncher {
 

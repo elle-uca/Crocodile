@@ -6,6 +6,8 @@ import org.ln.noor.directory.service.DirectoryFlattenService.ConflictStrategy;
 
 /**
  * Dialog prompting the user for conflict resolution strategy when flattening a directory.
+ *
+ * @author Luca Noale
  */
 @SuppressWarnings("serial")
 public class FlattenDirectoryDialog extends JDialog {

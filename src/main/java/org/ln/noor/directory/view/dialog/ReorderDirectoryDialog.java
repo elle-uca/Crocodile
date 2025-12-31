@@ -18,6 +18,8 @@ import javax.swing.JTextField;
 
 /**
  * Dialog used to insert a new directory before or after a selected path segment.
+ *
+ * @author Luca Noale
  */
 @SuppressWarnings("serial")
 public class ReorderDirectoryDialog extends JDialog {
