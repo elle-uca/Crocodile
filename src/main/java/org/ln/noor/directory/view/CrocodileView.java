@@ -2,6 +2,7 @@ package org.ln.noor.directory.view;
 
 
 
+import java.awt.Dimension;
 import java.awt.Image;
 import java.net.URL;
 import java.nio.file.Path;
@@ -47,7 +48,7 @@ public class CrocodileView extends JFrame {
     private JLabel rootDirLabel;
     private JLabel searchDirLabel;
     private JLabel reportLabel;
-    private JLabel jLabel4;
+    private JLabel infoLabel;
     private ButtonGroup buttonGroup;
     private JRadioButton emptyButton;
     private JRadioButton cancelButton;
@@ -93,7 +94,8 @@ public class CrocodileView extends JFrame {
         table.setFillsViewportHeight(true);
         scrollPane = new JScrollPane();
         scrollPane.setViewportView(table);
-        table.getColumnModel().getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.getColumnModel().getSelectionModel().setSelectionMode(
+        		ListSelectionModel.SINGLE_SELECTION);
          
         popupMenu = new JPopupMenu();
         menuItemAdd = new JMenuItem("Add New Dir");
@@ -102,16 +104,21 @@ public class CrocodileView extends JFrame {
         menuItemDeleteDir = new JMenuItem("Delete Directory");
         menuDeleteIntermediateDir = new JMenuItem("Delete Intermediate Directory");
   
-        menuItemAdd.addActionListener(new CrocodilePopupActionListener(this, controller));
-        menuItemRename.addActionListener(new CrocodilePopupActionListener(this, controller));
-        menuItemMoveFiles.addActionListener(new CrocodilePopupActionListener(this, controller));
-        menuItemDeleteDir.addActionListener(new CrocodilePopupActionListener(this, controller));
-        menuDeleteIntermediateDir.addActionListener(new CrocodilePopupActionListener(this, controller));
+        menuItemAdd.addActionListener(
+        		new CrocodilePopupActionListener(this, controller));
+        menuItemRename.addActionListener(
+        		new CrocodilePopupActionListener(this, controller));
+        menuItemMoveFiles.addActionListener(
+        		new CrocodilePopupActionListener(this, controller));
+        menuItemDeleteDir.addActionListener(
+        		new CrocodilePopupActionListener(this, controller));
+        menuDeleteIntermediateDir.addActionListener(
+        		new CrocodilePopupActionListener(this, controller));
         
         menuItemReorder = new JMenuItem("Reorder Directory...");
         popupMenu.add(menuItemReorder);
-        menuItemReorder.addActionListener(new CrocodilePopupActionListener(this, controller));
-
+        menuItemReorder.addActionListener(
+        		new CrocodilePopupActionListener(this, controller));
        
         popupMenu.add(menuItemAdd);
         popupMenu.add(menuItemRename);       
@@ -120,7 +127,13 @@ public class CrocodileView extends JFrame {
         popupMenu.add(menuDeleteIntermediateDir);
         
         table.setComponentPopupMenu(popupMenu);
-        table.addMouseListener(new TableRowSelectionMouseListener(table, controller));
+        table.addMouseListener(
+        		new TableRowSelectionMouseListener(table, controller));
+        table.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                controller.onDirectorySelected();
+            }
+        });
 	}
 
 
@@ -139,7 +152,7 @@ public class CrocodileView extends JFrame {
         searchDirLabel = new JLabel();
         rootDirLabel = new JLabel();
         reportLabel = new JLabel();
-        jLabel4 = new JLabel();
+        infoLabel = new JLabel();
         rootDirLabel = new JLabel();
         rootDirField = new JTextField();
         rootDirButton = new JButton();
@@ -149,7 +162,7 @@ public class CrocodileView extends JFrame {
         actionButton = new JButton();
 
         reportLabel = new JLabel();
-        jLabel4 = new JLabel();
+        infoLabel = new JLabel();
         
         buttonGroup = new ButtonGroup();
         cancelButton = new JRadioButton();
@@ -190,7 +203,6 @@ public class CrocodileView extends JFrame {
         rootDirButton.setText("Cerca");
         searchDirLabel.setText("Dir da cercare");
         searchDirButton.setText("Refresh");
-        jLabel4.setText("jLabel3");
 
         JPanel panel = new JPanel();
         panel.setLayout(new MigLayout("", "[][grow][grow][]", "20[][][][][]20"));
@@ -209,8 +221,8 @@ public class CrocodileView extends JFrame {
         
         panel.add(scrollPane, 		"cell 0 3 4 1, growx, wrap");
         
-        panel.add(reportLabel, 		"cell 0 4");
-        panel.add(jLabel4, 			"cell 0 5");
+        panel.add(reportLabel, 		"cell 0 4 4 1, growx, wrap");
+        panel.add(infoLabel, 		"cell 0 5 4 1, growx");
         
        
         URL iconUrl = CrocodileView.class
@@ -223,11 +235,15 @@ public class CrocodileView extends JFrame {
 
         Image icon = new ImageIcon(iconUrl).getImage();
         setIconImage(icon);
-
+        
+        panel.setPreferredSize(new Dimension(600, 600));
         getContentPane().add(panel);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
+        setSize(600, 600);
         pack();
+        
+        System.out.println(getSize());
     }            
 
 
@@ -281,6 +297,12 @@ public class CrocodileView extends JFrame {
 
 	public JLabel getReportLabel() {
 		return reportLabel;
+	}
+	
+	
+
+	public JLabel getInfoLabel() {
+		return infoLabel;
 	}
 
 	public JButton getActionButton() {

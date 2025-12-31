@@ -635,4 +635,43 @@ public class CrocodileController {
         refreshTable();
     }
 
+    public void onDirectorySelected() {
+
+        int row = crocodileView.getSelectedRow();
+        if (row < 0) {
+            clearDirectoryInfo();
+            return;
+        }
+
+        Path dir = crocodileView.getModel().getDirectoryAt(row);
+
+        // Label 1: info directory
+        crocodileView.getReportLabel()
+                .setText("Directory selezionata: " + dir.toAbsolutePath());
+
+        // Label 2: statistiche
+        try {
+            DirectoryStatsService.DirStats stats =
+                    statsService.countRecursive(dir);
+
+            crocodileView.getInfoLabel().setText(
+                    "Contenuto: " +
+                    stats.files + " file, " +
+                    stats.directories + " directory"
+            );
+
+        } catch (IOException ex) {
+            crocodileView.getInfoLabel()
+                    .setText("Errore lettura contenuto");
+        }
+
+        // opzionale: aggiorna menu Move Files
+       // updateMoveFilesAvailability();
+    }
+
+    private void clearDirectoryInfo() {
+        crocodileView.getReportLabel().setText("");
+        crocodileView.getInfoLabel().setText("");
+    }
+
 }
