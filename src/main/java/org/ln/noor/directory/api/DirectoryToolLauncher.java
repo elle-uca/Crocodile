@@ -6,6 +6,8 @@ import javax.swing.SwingUtilities;
 
 import org.ln.noor.directory.view.DirectoryToolView;
 
+import com.formdev.flatlaf.FlatLightLaf;
+
 /**
  * Utility class that provides entry points for launching the Directory Tool UI.
  *
@@ -19,6 +21,7 @@ public final class DirectoryToolLauncher {
      * Launches the Directory Tool as a standalone window on the Swing event thread.
      */
     public static void open() {
+    	FlatLightLaf.setup();
         SwingUtilities.invokeLater(() -> {
             new DirectoryToolView().setVisible(true);
         });
@@ -31,6 +34,7 @@ public final class DirectoryToolLauncher {
      * @param owner parent frame that owns the modal dialog
      */
     public static void openModal(JFrame owner) {
+    	FlatLightLaf.setup();
         DirectoryToolView view = new DirectoryToolView();
 
         // Build a modal dialog that hosts the tool's content pane.

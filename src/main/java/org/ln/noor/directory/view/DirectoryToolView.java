@@ -29,6 +29,8 @@ import org.ln.noor.directory.action.ExecuteAction;
 import org.ln.noor.directory.action.RefreshSearchAction;
 import org.ln.noor.directory.service.DirectoryStatsService;
 
+import com.formdev.flatlaf.FlatLightLaf;
+
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -464,6 +466,7 @@ public class DirectoryToolView extends JFrame {
 
 
         public static void main(String[] args) {
+        	FlatLightLaf.setup();
         	SwingUtilities.invokeLater(() -> {
         		new DirectoryToolView().setVisible(true);
         	});
