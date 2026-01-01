@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/Crocodile-logo.png" alt="Crocodile Banner">
+</p>
+
 # Crocodile Directory Tool
 
 Crocodile is a Swing-based utility for inspecting and bulk editing directory trees. It provides a lightweight UI for scanning folders, searching by name, deleting or emptying matching directories, and planning reorder/flatten operations.
