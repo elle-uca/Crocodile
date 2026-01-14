@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.table.AbstractTableModel;
 
+import org.ln.noor.directory.DirectoryScanResult;
 import org.ln.noor.directory.service.DirectoryStatsService;
 
 /**
@@ -25,28 +26,30 @@ public class DirectoryTableModel extends AbstractTableModel implements Serializa
             "Directory",
             "Contenuto"
     );
-
-    private final List<Path> directories = new ArrayList<>();
-
-    private final DirectoryStatsService statsService;
+    private final List<DirectoryScanResult> rows = new ArrayList<>();
     
-    private final Map<Path, Integer> cache = new ConcurrentHashMap<>();
-
+//    private final List<Path> directories = new ArrayList<>();
+//
+//    private final DirectoryStatsService statsService;
+//    
+//    private final Map<Path, Integer> cache = new ConcurrentHashMap<>();
+    
+    
     /**
      * Creates a new model bound to the provided statistics service.
      *
      * @param statsService service used to compute directory statistics
      */
-    public DirectoryTableModel(DirectoryStatsService statsService) {
-        this.statsService = statsService;
-    }
+//    public DirectoryTableModel(DirectoryStatsService statsService) {
+//        this.statsService = statsService;
+//    }
 
     /**
      * Returns the number of rows currently stored in the model.
      */
     @Override
     public int getRowCount() {
-        return directories.size();
+        return rows.size();
     }
 
     /**
@@ -70,15 +73,27 @@ public class DirectoryTableModel extends AbstractTableModel implements Serializa
      */
     @Override
     public Object getValueAt(int row, int col) {
-        Path dir = directories.get(row);
-
+        DirectoryScanResult r = rows.get(row);
         return switch (col) {
-            case 0 -> dir.toAbsolutePath().toString();
-            //case 1 -> statsService.countDirectChildren(dir);
-            case 1 -> cache.getOrDefault(dir, -1);
+            case 0 -> r.dir.toString();
+            case 1 -> r.files + " file, " + r.subDirs + " dir";
             default -> "";
         };
     }
+    
+    
+    
+//    @Override
+//    public Object getValueAt(int row, int col) {
+//        Path dir = directories.get(row);
+//
+//        return switch (col) {
+//            case 0 -> dir.toAbsolutePath().toString();
+//            //case 1 -> statsService.countDirectChildren(dir);
+//            case 1 -> cache.getOrDefault(dir, -1);
+//            default -> "";
+//        };
+//    }
 
     /* -------------------------
      *  Domain-specific API
@@ -90,29 +105,35 @@ public class DirectoryTableModel extends AbstractTableModel implements Serializa
      * @param row table row index
      * @return directory path for the row
      */
-    public Path getDirectoryAt(int row) {
-        return directories.get(row);
-    }
+//    public Path getDirectoryAt(int row) {
+//        return directories.get(row);
+//    }
 
     /**
      * Exposes the list of directories for read-only use.
      *
      * @return backing list of directories
      */
-    public List<Path> getDirectories() {
-        return directories;
-    }
+//    public List<Path> getDirectories() {
+//        return directories;
+//    }
 
+    public List<DirectoryScanResult> getRows() {
+        return rows;
+    }
+    
+    public DirectoryScanResult getRow(int row) {
+        return rows.get(row);
+    }
+    
     /**
      * Replaces the current directories with the provided collection.
      *
      * @param dirs new directories to display
      */
-    public void setDirectories(Collection<Path> dirs) {
-        directories.clear();
-        if (dirs != null) {
-            directories.addAll(dirs);
-        }
+    public void setResults(List<DirectoryScanResult> data) {
+        rows.clear();
+        rows.addAll(data);
         fireTableDataChanged();
     }
 
@@ -120,9 +141,9 @@ public class DirectoryTableModel extends AbstractTableModel implements Serializa
      * Clears all rows from the model when present.
      */
     public void clear() {
-        int size = directories.size();
+        int size = rows.size();
         if (size > 0) {
-            directories.clear();
+            rows.clear();
             fireTableRowsDeleted(0, size - 1);
         }
     }

@@ -10,6 +10,7 @@ import java.util.prefs.Preferences;
 import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import org.ln.noor.directory.service.DirectoryFlattenService;
 import org.ln.noor.directory.service.DirectoryReorderService;
@@ -17,7 +18,6 @@ import org.ln.noor.directory.service.DirectoryReorderService.ReorderPlan;
 import org.ln.noor.directory.service.DirectoryStatsService;
 import org.ln.noor.directory.service.FilesystemService;
 import org.ln.noor.directory.util.DirectoryUtils;
-import org.ln.noor.directory.view.DirectoryTableModel;
 import org.ln.noor.directory.view.DirectoryToolView;
 import org.ln.noor.directory.view.FileNameDialog;
 import org.ln.noor.directory.view.dialog.FlattenDirectoryDialog;
@@ -74,41 +74,30 @@ public class DirectoryToolController {
         Path root = crocodileView.getSelectedDir();
         if (root == null) return;
 
-        DirectoryTableModel model = crocodileView.getModel();
+        var model = crocodileView.getModel();
         model.clear();
 
-        crocodileView.getTable().setEnabled(false);
         crocodileView.showProgress(true);
         crocodileView.setGlobalReport("Scansione in corso...");
 
-        DirectoryScannerWorker worker = new DirectoryScannerWorker(
-            root,
+        DirectoryScannerWorker worker = new DirectoryScannerWorker(root);
 
-            // onDirFound
-            p -> {
-                DirectoryTableModel m = crocodileView.getModel();
-                int row = m.getRowCount();
-                m.getDirectories().add(p);
-                m.fireTableRowsInserted(row, row);
-            },
-
-            // onProgress
-            percent -> crocodileView.getProgress().setValue(percent),
-
-            // onDone
-            all -> {
-                crocodileView.setGlobalReport("Caricate " + all.size() + " directory");
-                crocodileView.showProgress(false);
-                crocodileView.getTable().setEnabled(true);
-            },
-
-            // onError
-            ex -> showError("Errore scansione directory", ex)
-        );
-
-        worker.attachProgressListener();
         worker.execute();
+
+        new Thread(() -> {
+            try {
+                List<DirectoryScanResult> data = worker.get();
+                SwingUtilities.invokeLater(() -> {
+                    model.setResults(data);
+                    crocodileView.setGlobalReport("Caricate " + data.size() + " directory");
+                    crocodileView.showProgress(false);
+                });
+            } catch (Exception e) {
+                showError("Errore scansione", e);
+            }
+        }).start();
     }
+
 
 
 
@@ -155,7 +144,7 @@ public class DirectoryToolController {
                 crocodileView.getSearchDirField().getText());
 
         displayDirectorySearch(crocodileView.getSelectedDir());
-        crocodileView.getModel().setDirectories(crocodileView.getDirList());
+       // crocodileView.getModel().setDirectories(crocodileView.getDirList());
         crocodileView.getActionButton().setEnabled(true);
     }
 
@@ -191,7 +180,13 @@ public class DirectoryToolController {
 
         if (!confirm("Sei sicuro di procedere?")) return;
 
-        List<Path> list = crocodileView.getModel().getDirectories();
+       // List<Path> list = crocodileView.getModel().getDirectories();
+        
+        List<Path> list = crocodileView.getModel()
+                .getRows()
+                .stream()
+                .map(r -> r.dir)
+                .toList();
 
         if (list != null && !list.isEmpty()) {
             delete(list);
@@ -266,7 +261,9 @@ public class DirectoryToolController {
         int row = crocodileView.getSelectedRow();
         if (row < 0) return;
 
-        Path source = crocodileView.getModel().getDirectoryAt(row);
+        //Path source = crocodileView.getModel().getDirectoryAt(row);
+        DirectoryScanResult r = crocodileView.getModel().getRow(row);
+        Path source = r.dir;
 
         Object[] options = {
                 "Solo file",
@@ -349,8 +346,10 @@ public class DirectoryToolController {
             moveItem.setEnabled(false);
             return;
         }
-
-        Path dir = crocodileView.getModel().getDirectoryAt(row);
+        DirectoryScanResult r = crocodileView.getModel().getRow(row);
+        Path dir = r.dir;
+        
+       // Path dir = crocodileView.getModel().getDirectoryAt(row);
         boolean enabled = !isDirectoryEmpty(dir);
 
         moveItem.setEnabled(enabled);
@@ -371,7 +370,9 @@ public class DirectoryToolController {
             return;
         }
 
-        Path dir = crocodileView.getModel().getDirectoryAt(row);
+        //Path dir = crocodileView.getModel().getDirectoryAt(row);
+        DirectoryScanResult r = crocodileView.getModel().getRow(row);
+        Path dir = r.dir;
 
         // First confirmation: deletion of the directory itself
         int confirmDir = JOptionPane.showConfirmDialog(
@@ -437,8 +438,10 @@ public class DirectoryToolController {
 	        showWarning("Seleziona una directory.");
 	        return;
 	    }
+	    DirectoryScanResult r = crocodileView.getModel().getRow(row);
+	    Path dir = r.dir;
 
-	    Path dir = crocodileView.getModel().getDirectoryAt(row);
+	    //Path dir = crocodileView.getModel().getDirectoryAt(row);
 	    Path parent = dir.getParent();
 
 	    if (parent == null) {
@@ -485,10 +488,13 @@ public class DirectoryToolController {
 	    }
 
 	    // Directory selezionata
-	    Path selectedPath = crocodileView.getModel()
-	            .getDirectoryAt(row)
-	            .normalize()
-	            .toAbsolutePath();
+//	    Path selectedPath = crocodileView.getModel()
+//	            .getDirectoryAt(row)
+//	            .normalize()
+//	            .toAbsolutePath();
+	    
+	    DirectoryScanResult r = crocodileView.getModel().getRow(row);
+	    Path selectedPath = r.dir.normalize().toAbsolutePath();
 
 	    // Root operativa dell'app (campo "Root dir")
 	    Path operationRoot = crocodileView.getSelectedDir()
@@ -660,7 +666,9 @@ public class DirectoryToolController {
             return;
         }
 
-        Path parentDir = crocodileView.getModel().getDirectoryAt(row);
+        DirectoryScanResult r = crocodileView.getModel().getRow(row);
+        Path parentDir = r.dir;
+       // Path parentDir = crocodileView.getModel().getDirectoryAt(row);
 
         FileNameDialog dialog = new FileNameDialog(crocodileView, "");
         dialog.setVisible(true);
@@ -698,7 +706,9 @@ public class DirectoryToolController {
             return;
         }
 
-        Path dir = crocodileView.getModel().getDirectoryAt(row);
+        DirectoryScanResult r = crocodileView.getModel().getRow(row);
+        Path dir = r.dir;
+        //Path dir = crocodileView.getModel().getDirectoryAt(row);
         Path parent = dir.getParent();
 
         if (parent == null) {
@@ -748,7 +758,9 @@ public class DirectoryToolController {
             return;
         }
 
-        Path dir = crocodileView.getModel().getDirectoryAt(row);
+        //Path dir = crocodileView.getModel().getDirectoryAt(row);
+    	DirectoryScanResult r = crocodileView.getModel().getRow(row);
+    	Path dir = r.dir;
 
         // Label 1: info directory
         crocodileView.setSelected("Directory selezionata: " + dir.toAbsolutePath());
@@ -777,5 +789,7 @@ public class DirectoryToolController {
 //        crocodileView.getReportLabel().setText("");
 //        crocodileView.getInfoLabel().setText("");
     }
+
+
 
 }

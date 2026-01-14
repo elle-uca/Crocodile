@@ -28,7 +28,6 @@ import org.ln.noor.directory.DirectoryToolController;
 import org.ln.noor.directory.action.ChooseRootDirAction;
 import org.ln.noor.directory.action.ExecuteAction;
 import org.ln.noor.directory.action.RefreshSearchAction;
-import org.ln.noor.directory.service.DirectoryStatsService;
 
 import com.formdev.flatlaf.FlatLightLaf;
 
@@ -92,7 +91,7 @@ public class DirectoryToolView extends JFrame {
 	 */
 	private void initTable() {
 		table = new JTable();
-		model = new DirectoryTableModel(new DirectoryStatsService());
+		model = new DirectoryTableModel();
 		table.setModel(model);
 		table.setDefaultRenderer(Object.class, new DirectoryCellRenderer());
 		table.setFillsViewportHeight(true);
