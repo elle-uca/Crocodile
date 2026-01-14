@@ -221,7 +221,8 @@ public class DirectoryToolView extends JFrame {
 
 		panel.add(scrollPane, 		"cell 0 3 4 1, grow, wrap");
 
-		panel.add(globalReportLabel,"cell 0 4 4 1, growx, wrap");
+		panel.add(globalReportLabel,"cell 0 4 2 1, growx");
+		panel.add(progress,			"cell 2 4 2 1, growx, wrap");
 		panel.add(selectedLabel, 	"cell 0 5 4 1, growx, wrap");
 		panel.add(detailSelLabel, 	"cell 0 6 4 1, growx");
 

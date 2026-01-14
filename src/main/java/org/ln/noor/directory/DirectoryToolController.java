@@ -105,11 +105,28 @@ public class DirectoryToolController {
         var model = crocodileView.getModel();
         model.clear();
 
-        crocodileView.setGlobalReport("Scansione rete in corso...");
+        // Progressbar: su rete deve essere indeterminate
+        crocodileView.getProgress().setIndeterminate(true);
         crocodileView.showProgress(true);
 
-        NetworkDirectoryScanner worker =
-                new NetworkDirectoryScanner(root, model);
+        crocodileView.setGlobalReport("Scansione rete in corso...");
+        // forza repaint del pannello stato (utile se layout “pigro”)
+        crocodileView.repaint();
+
+        NetworkDirectoryScanner worker = new NetworkDirectoryScanner(
+                root,
+                model,
+                msg -> {
+                    if ("DONE".equals(msg)) {
+                        int count = model.getRowCount();
+                        crocodileView.getProgress().setIndeterminate(false);
+                        crocodileView.showProgress(false);
+                        crocodileView.setGlobalReport("Caricate " + count + " directory");
+                    } else {
+                    	crocodileView.setGlobalReport(msg);
+                    }
+                }
+        );
 
         worker.execute();
     }
