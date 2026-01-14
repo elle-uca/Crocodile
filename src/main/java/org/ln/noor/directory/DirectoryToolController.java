@@ -10,7 +10,6 @@ import java.util.prefs.Preferences;
 import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 
 import org.ln.noor.directory.service.DirectoryFlattenService;
 import org.ln.noor.directory.service.DirectoryReorderService;
@@ -70,35 +69,50 @@ public class DirectoryToolController {
 //    }
     
     
-    void refreshTable() {
+//    void refreshTable() {
+//        Path root = crocodileView.getSelectedDir();
+//        if (root == null) return;
+//
+//        var model = crocodileView.getModel();
+//        model.clear();
+//
+//        crocodileView.showProgress(true);
+//        crocodileView.setGlobalReport("Scansione in corso...");
+//
+//        DirectoryScannerWorker worker = new DirectoryScannerWorker(root);
+//
+//        worker.execute();
+//
+//        new Thread(() -> {
+//            try {
+//                List<DirectoryScanResult> data = worker.get();
+//                SwingUtilities.invokeLater(() -> {
+//                    model.setResults(data);
+//                    crocodileView.setGlobalReport("Caricate " + data.size() + " directory");
+//                    crocodileView.showProgress(false);
+//                });
+//            } catch (Exception e) {
+//                showError("Errore scansione", e);
+//            }
+//        }).start();
+//    }
+
+
+    public void refreshTable() {
         Path root = crocodileView.getSelectedDir();
         if (root == null) return;
 
         var model = crocodileView.getModel();
         model.clear();
 
+        crocodileView.setGlobalReport("Scansione rete in corso...");
         crocodileView.showProgress(true);
-        crocodileView.setGlobalReport("Scansione in corso...");
 
-        DirectoryScannerWorker worker = new DirectoryScannerWorker(root);
+        NetworkDirectoryScanner worker =
+                new NetworkDirectoryScanner(root, model);
 
         worker.execute();
-
-        new Thread(() -> {
-            try {
-                List<DirectoryScanResult> data = worker.get();
-                SwingUtilities.invokeLater(() -> {
-                    model.setResults(data);
-                    crocodileView.setGlobalReport("Caricate " + data.size() + " directory");
-                    crocodileView.showProgress(false);
-                });
-            } catch (Exception e) {
-                showError("Errore scansione", e);
-            }
-        }).start();
     }
-
-
 
 
 

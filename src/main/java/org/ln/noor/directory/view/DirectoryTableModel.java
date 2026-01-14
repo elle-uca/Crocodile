@@ -126,6 +126,18 @@ public class DirectoryTableModel extends AbstractTableModel implements Serializa
         return rows.get(row);
     }
     
+    public void upsert(DirectoryScanResult r) {
+        for (int i = 0; i < rows.size(); i++) {
+            if (rows.get(i).dir.equals(r.dir)) {
+                rows.set(i, r);
+                fireTableRowsUpdated(i, i);
+                return;
+            }
+        }
+        rows.add(r);
+        fireTableRowsInserted(rows.size() - 1, rows.size() - 1);
+    }
+    
     /**
      * Replaces the current directories with the provided collection.
      *
