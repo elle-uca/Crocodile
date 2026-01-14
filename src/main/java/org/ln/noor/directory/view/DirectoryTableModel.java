@@ -1,17 +1,12 @@
 package org.ln.noor.directory.view;
 
 import java.io.Serializable;
-import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.table.AbstractTableModel;
 
 import org.ln.noor.directory.DirectoryScanResult;
-import org.ln.noor.directory.service.DirectoryStatsService;
 
 /**
  * TableModel for directories only.
@@ -26,24 +21,11 @@ public class DirectoryTableModel extends AbstractTableModel implements Serializa
             "Directory",
             "Contenuto"
     );
+    
     private final List<DirectoryScanResult> rows = new ArrayList<>();
     
-//    private final List<Path> directories = new ArrayList<>();
-//
-//    private final DirectoryStatsService statsService;
-//    
-//    private final Map<Path, Integer> cache = new ConcurrentHashMap<>();
-    
-    
-    /**
-     * Creates a new model bound to the provided statistics service.
-     *
-     * @param statsService service used to compute directory statistics
-     */
-//    public DirectoryTableModel(DirectoryStatsService statsService) {
-//        this.statsService = statsService;
-//    }
 
+ 
     /**
      * Returns the number of rows currently stored in the model.
      */
@@ -81,42 +63,13 @@ public class DirectoryTableModel extends AbstractTableModel implements Serializa
         };
     }
     
-    
-    
-//    @Override
-//    public Object getValueAt(int row, int col) {
-//        Path dir = directories.get(row);
-//
-//        return switch (col) {
-//            case 0 -> dir.toAbsolutePath().toString();
-//            //case 1 -> statsService.countDirectChildren(dir);
-//            case 1 -> cache.getOrDefault(dir, -1);
-//            default -> "";
-//        };
-//    }
+
 
     /* -------------------------
      *  Domain-specific API
      * ------------------------- */
 
-    /**
-     * Retrieves the directory stored at the given row.
-     *
-     * @param row table row index
-     * @return directory path for the row
-     */
-//    public Path getDirectoryAt(int row) {
-//        return directories.get(row);
-//    }
 
-    /**
-     * Exposes the list of directories for read-only use.
-     *
-     * @return backing list of directories
-     */
-//    public List<Path> getDirectories() {
-//        return directories;
-//    }
 
     public List<DirectoryScanResult> getRows() {
         return rows;

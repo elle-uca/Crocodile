@@ -6,8 +6,8 @@ import java.nio.file.Path;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
+import java.util.function.Consumer;
 
-import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 import org.ln.noor.directory.view.DirectoryTableModel;
@@ -19,10 +19,10 @@ extends SwingWorker<Void, DirectoryScanResult> {
 	private final DirectoryTableModel model;
 	private int scanned = 0;
 	private long lastReportUiMs = 0;  
-	private final java.util.function.Consumer<String> onReport;
+	private final Consumer<String> onReport;
 
 	public NetworkDirectoryScanner(Path root, DirectoryTableModel model,
-			java.util.function.Consumer<String> onReport) {
+			Consumer<String> onReport) {
 		this.root = root;
 		this.model = model;
 		this.onReport = onReport;

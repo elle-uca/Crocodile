@@ -58,45 +58,7 @@ public class DirectoryToolController {
      *  TABLE / DIRECTORY SCAN
      * ------------------------------------------------- */
 
-//    void refreshTable() {
-//        Path root = crocodileView.getSelectedDir();
-//        if (root == null) return;
-//
-//        crocodileView.getDirList().clear();
-//        displayDirectory(root);
-//        crocodileView.getModel().setDirectories(crocodileView.getDirList());
-//        crocodileView.setGlobalReport("Caricate "+crocodileView.getDirList().size()+" directory" );
-//    }
-    
-    
-//    void refreshTable() {
-//        Path root = crocodileView.getSelectedDir();
-//        if (root == null) return;
-//
-//        var model = crocodileView.getModel();
-//        model.clear();
-//
-//        crocodileView.showProgress(true);
-//        crocodileView.setGlobalReport("Scansione in corso...");
-//
-//        DirectoryScannerWorker worker = new DirectoryScannerWorker(root);
-//
-//        worker.execute();
-//
-//        new Thread(() -> {
-//            try {
-//                List<DirectoryScanResult> data = worker.get();
-//                SwingUtilities.invokeLater(() -> {
-//                    model.setResults(data);
-//                    crocodileView.setGlobalReport("Caricate " + data.size() + " directory");
-//                    crocodileView.showProgress(false);
-//                });
-//            } catch (Exception e) {
-//                showError("Errore scansione", e);
-//            }
-//        }).start();
-//    }
-
+ 
 
     public void refreshTable() {
         Path root = crocodileView.getSelectedDir();
@@ -105,12 +67,9 @@ public class DirectoryToolController {
         var model = crocodileView.getModel();
         model.clear();
 
-        // Progressbar: su rete deve essere indeterminate
         crocodileView.getProgress().setIndeterminate(true);
         crocodileView.showProgress(true);
-
-        crocodileView.setGlobalReport("Scansione rete in corso...");
-        // forza repaint del pannello stato (utile se layout “pigro”)
+       crocodileView.setGlobalReport("Scansione rete in corso...");
         crocodileView.repaint();
 
         NetworkDirectoryScanner worker = new NetworkDirectoryScanner(
@@ -175,7 +134,6 @@ public class DirectoryToolController {
                 crocodileView.getSearchDirField().getText());
 
         displayDirectorySearch(crocodileView.getSelectedDir());
-       // crocodileView.getModel().setDirectories(crocodileView.getDirList());
         crocodileView.getActionButton().setEnabled(true);
     }
 
