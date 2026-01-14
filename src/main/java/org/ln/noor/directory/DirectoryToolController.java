@@ -17,6 +17,7 @@ import org.ln.noor.directory.service.DirectoryReorderService.ReorderPlan;
 import org.ln.noor.directory.service.DirectoryStatsService;
 import org.ln.noor.directory.service.FilesystemService;
 import org.ln.noor.directory.util.DirectoryUtils;
+import org.ln.noor.directory.view.DirectoryTableModel;
 import org.ln.noor.directory.view.DirectoryToolView;
 import org.ln.noor.directory.view.FileNameDialog;
 import org.ln.noor.directory.view.dialog.FlattenDirectoryDialog;
@@ -58,14 +59,60 @@ public class DirectoryToolController {
      *  TABLE / DIRECTORY SCAN
      * ------------------------------------------------- */
 
+//    void refreshTable() {
+//        Path root = crocodileView.getSelectedDir();
+//        if (root == null) return;
+//
+//        crocodileView.getDirList().clear();
+//        displayDirectory(root);
+//        crocodileView.getModel().setDirectories(crocodileView.getDirList());
+//        crocodileView.setGlobalReport("Caricate "+crocodileView.getDirList().size()+" directory" );
+//    }
+    
+    
     void refreshTable() {
         Path root = crocodileView.getSelectedDir();
         if (root == null) return;
 
-        crocodileView.getDirList().clear();
-        displayDirectory(root);
-        crocodileView.getModel().setDirectories(crocodileView.getDirList());
+        DirectoryTableModel model = crocodileView.getModel();
+        model.clear();
+
+        crocodileView.getTable().setEnabled(false);
+        crocodileView.showProgress(true);
+        crocodileView.setGlobalReport("Scansione in corso...");
+
+        DirectoryScannerWorker worker = new DirectoryScannerWorker(
+            root,
+
+            // onDirFound
+            p -> {
+                DirectoryTableModel m = crocodileView.getModel();
+                int row = m.getRowCount();
+                m.getDirectories().add(p);
+                m.fireTableRowsInserted(row, row);
+            },
+
+            // onProgress
+            percent -> crocodileView.getProgress().setValue(percent),
+
+            // onDone
+            all -> {
+                crocodileView.setGlobalReport("Caricate " + all.size() + " directory");
+                crocodileView.showProgress(false);
+                crocodileView.getTable().setEnabled(true);
+            },
+
+            // onError
+            ex -> showError("Errore scansione directory", ex)
+        );
+
+        worker.attachProgressListener();
+        worker.execute();
     }
+
+
+
+
 
     void displayDirectory(Path root) {
         try {
@@ -377,7 +424,7 @@ public class DirectoryToolController {
         }
 
         refreshTable();
-        crocodileView.getReportLabel().setText("Directory cancellata");
+        crocodileView.setGlobalReport("Caricate "+crocodileView.getDirList().size()+" directory" );
     }
 
     /**
@@ -422,7 +469,7 @@ public class DirectoryToolController {
 	    }
 
 	    refreshTable();
-	    crocodileView.getReportLabel().setText("Directory intermedia eliminata");
+	    crocodileView.setGlobalReport("Caricate "+crocodileView.getDirList().size()+" directory" );
         }
 
 
@@ -704,23 +751,22 @@ public class DirectoryToolController {
         Path dir = crocodileView.getModel().getDirectoryAt(row);
 
         // Label 1: info directory
-        crocodileView.getReportLabel()
-                .setText("Directory selezionata: " + dir.toAbsolutePath());
+        crocodileView.setSelected("Directory selezionata: " + dir.toAbsolutePath());
 
         // Label 2: statistiche
         try {
             DirectoryStatsService.DirStats stats =
                     statsService.countRecursive(dir);
 
-            crocodileView.getInfoLabel().setText(
+            crocodileView.setDetail(
                     "Contenuto: " +
                     stats.files + " file, " +
                     stats.directories + " directory"
             );
 
         } catch (IOException ex) {
-            crocodileView.getInfoLabel()
-                    .setText("Errore lettura contenuto");
+//            crocodileView.getInfoLabel()
+//                    .setText("Errore lettura contenuto");
         }
 
         // opzionale: aggiorna menu Move Files
@@ -728,8 +774,8 @@ public class DirectoryToolController {
     }
 
     private void clearDirectoryInfo() {
-        crocodileView.getReportLabel().setText("");
-        crocodileView.getInfoLabel().setText("");
+//        crocodileView.getReportLabel().setText("");
+//        crocodileView.getInfoLabel().setText("");
     }
 
 }

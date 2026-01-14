@@ -5,6 +5,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.table.AbstractTableModel;
 
@@ -27,6 +29,8 @@ public class DirectoryTableModel extends AbstractTableModel implements Serializa
     private final List<Path> directories = new ArrayList<>();
 
     private final DirectoryStatsService statsService;
+    
+    private final Map<Path, Integer> cache = new ConcurrentHashMap<>();
 
     /**
      * Creates a new model bound to the provided statistics service.
@@ -70,7 +74,8 @@ public class DirectoryTableModel extends AbstractTableModel implements Serializa
 
         return switch (col) {
             case 0 -> dir.toAbsolutePath().toString();
-            case 1 -> statsService.countDirectChildren(dir);
+            //case 1 -> statsService.countDirectChildren(dir);
+            case 1 -> cache.getOrDefault(dir, -1);
             default -> "";
         };
     }
