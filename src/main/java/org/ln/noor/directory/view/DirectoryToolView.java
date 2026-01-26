@@ -61,7 +61,7 @@ public class DirectoryToolView extends JFrame {
 
 	private DirectoryToolController controller;
 	private List<Path> dirList;
-	private String searchDir = "invio";
+	//private String searchDir = "invio";
 	private Path selectedDir;
 
 	private JTable table;
@@ -283,17 +283,10 @@ public class DirectoryToolView extends JFrame {
 	 * @return current search value
 	 */
 	public String getSearchDir() {
-		return searchDir;
+		return getSearchDirField().getText();
 	}
 
-	/**
-	 * Updates the search filter used by the controller.
-	 *
-	 * @param searchDir new search value
-	 */
-	public void setSearchDir(String searchDir) {
-		this.searchDir = searchDir;
-	}
+
 
 	/**
 	 * Returns the directory currently selected in the table.

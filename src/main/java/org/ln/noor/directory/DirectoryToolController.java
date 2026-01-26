@@ -5,18 +5,23 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.prefs.Preferences;
 
 import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import org.ln.noor.directory.service.DirectoryFlattenService;
 import org.ln.noor.directory.service.DirectoryReorderService;
 import org.ln.noor.directory.service.DirectoryReorderService.ReorderPlan;
+import org.ln.noor.directory.service.DirectoryScannerCore;
 import org.ln.noor.directory.service.DirectoryStatsService;
 import org.ln.noor.directory.service.FilesystemService;
+import org.ln.noor.directory.service.ScanCallbacks;
 import org.ln.noor.directory.util.DirectoryUtils;
+import org.ln.noor.directory.view.DirectoryTableModel;
 import org.ln.noor.directory.view.DirectoryToolView;
 import org.ln.noor.directory.view.FileNameDialog;
 import org.ln.noor.directory.view.dialog.FlattenDirectoryDialog;
@@ -30,7 +35,7 @@ import org.ln.noor.directory.view.dialog.ReorderDirectoryDialog;
  */
 public class DirectoryToolController {
 
-    private final DirectoryToolView crocodileView;
+    private final DirectoryToolView view;
     private final DirectoryStatsService statsService;
 
     private static final Preferences prefs =
@@ -50,7 +55,7 @@ public class DirectoryToolController {
      * @param crocodileView the view component backing the controller
      */
     public DirectoryToolController(DirectoryToolView crocodileView) {
-        this.crocodileView = crocodileView;
+        this.view = crocodileView;
         this.statsService = new DirectoryStatsService();
     }
 
@@ -60,82 +65,141 @@ public class DirectoryToolController {
 
  
 
+
     public void refreshTable() {
-        Path root = crocodileView.getSelectedDir();
+
+        Path root = view.getSelectedDir();
         if (root == null) return;
 
-        var model = crocodileView.getModel();
+        DirectoryTableModel model = view.getModel();
         model.clear();
 
-        crocodileView.getProgress().setIndeterminate(true);
-        crocodileView.showProgress(true);
-       crocodileView.setGlobalReport("Scansione rete in corso...");
-        crocodileView.repaint();
+        view.getProgress().setIndeterminate(true);
+        view.showProgress(true);
+        view.setGlobalReport("Scansione rete in corso...");
+        view.repaint();
 
-        NetworkDirectoryScanner worker = new NetworkDirectoryScanner(
-                root,
-                model,
-                msg -> {
-                    if ("DONE".equals(msg)) {
-                        int count = model.getRowCount();
-                        crocodileView.getProgress().setIndeterminate(false);
-                        crocodileView.showProgress(false);
-                        crocodileView.setGlobalReport("Caricate " + count + " directory");
-                    } else {
-                    	crocodileView.setGlobalReport(msg);
-                    }
+        DirectoryScannerCore core =
+            new DirectoryScannerCore(root, null, new ScanCallbacks() {
+
+                @Override
+                public void onDirectory(Path dir) {
+                    SwingUtilities.invokeLater(() -> {
+                        // ✅ usa il model, NON una lista esterna
+                        model.upsert(new DirectoryScanResult(dir));
+                    });
                 }
-        );
 
-        worker.execute();
+                @Override
+                public void onProgress(int scanned) {
+                    SwingUtilities.invokeLater(() ->
+                        view.setGlobalReport(
+                            "Scansionate " + scanned + " directory...")
+                    );
+                }
+
+                @Override
+                public void onDone() {
+                    SwingUtilities.invokeLater(() -> {
+                        view.getProgress().setIndeterminate(false);
+                        view.showProgress(false);
+                        view.setGlobalReport(
+                            "Trovate " + model.getRowCount() + " directory"
+                        );
+                    });
+                }
+            });
+
+        new Thread(core, "swing-scan").start();
     }
 
 
-
-
-    void displayDirectory(Path root) {
-        try {
-            Files.walk(root)
-                 .filter(Files::isDirectory)
-                 .filter(p -> !p.equals(root))
-                 .forEach(crocodileView.getDirList()::add);
-        } catch (IOException ex) {
-            showError("Errore lettura directory", ex);
-        }
-    }
-
-    void displayDirectorySearch(Path root) {
-        String searchName = crocodileView.getSearchDir();
-        crocodileView.getDirList().clear();
-
-        try {
-            Files.walk(root)
-                 .filter(Files::isDirectory)
-                 .filter(p -> p.getFileName().toString().equals(searchName))
-                 .forEach(crocodileView.getDirList()::add);
-        } catch (IOException ex) {
-            showError("Errore ricerca directory", ex);
-        }
-    }
-
-    /* -------------------------------------------------
-     *  ACTIONS
-     * ------------------------------------------------- */
-
+    
+    
+//    void displayDirectory(Path root) {
+//        try {
+//            Files.walk(root)
+//                 .filter(Files::isDirectory)
+//                 .filter(p -> !p.equals(root))
+//                 .forEach(crocodileView.getDirList()::add);
+//        } catch (IOException ex) {
+//            showError("Errore lettura directory", ex);
+//        }
+//    }
 
     
     /**
      * Executes a filtered search based on the text field and updates the table.
      */
     public void refreshSearch() {
-        if (crocodileView.getSelectedDir() == null) return;
 
-        crocodileView.setSearchDir(
-                crocodileView.getSearchDirField().getText());
+        Path root = view.getSelectedDir();
+        if (root == null) return;
 
-        displayDirectorySearch(crocodileView.getSelectedDir());
-        crocodileView.getActionButton().setEnabled(true);
+        String searchName = view.getSearchDir();
+        if (searchName.isBlank()) {
+            showWarning("Inserisci un nome di directory da cercare.");
+            return;
+        }
+
+        String needle = searchName.trim().toLowerCase();
+
+        DirectoryTableModel model = view.getModel();
+        model.clear();
+
+        view.getProgress().setIndeterminate(true);
+        view.showProgress(true);
+        view.setGlobalReport("Ricerca in corso...");
+        view.repaint();
+
+        Predicate<Path> filter = p -> {
+            Path name = p.getFileName();
+            return name != null &&
+                   name.toString().toLowerCase().equals(needle);
+        };
+
+        DirectoryScannerCore core =
+            new DirectoryScannerCore(root, filter, new ScanCallbacks() {
+
+                @Override
+                public void onDirectory(Path dir) {
+                    SwingUtilities.invokeLater(() ->
+                        model.upsert(new DirectoryScanResult(dir))
+                    );
+                }
+
+                @Override
+                public void onProgress(int scanned) {
+                    SwingUtilities.invokeLater(() ->
+                        view.setGlobalReport(
+                            "Scansionate " + scanned + " directory...")
+                    );
+                }
+
+                @Override
+                public void onDone() {
+                    SwingUtilities.invokeLater(() -> {
+                        view.getProgress().setIndeterminate(false);
+                        view.showProgress(false);
+                        view.setGlobalReport(
+                            "Trovate " + model.getRowCount() +
+                            " directory con nome \"" + searchName + "\""
+                        );
+                    });
+                }
+            });
+
+        new Thread(core, "swing-search").start();
     }
+
+
+
+    /* -------------------------------------------------
+     *  ACTIONS
+     * ------------------------------------------------- */
+
+
+
 
     /**
      * Opens a chooser to pick the root directory and initializes the view state.
@@ -149,17 +213,17 @@ public class DirectoryToolController {
 
         fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-        if (fc.showOpenDialog(crocodileView) != JFileChooser.APPROVE_OPTION) {
+        if (fc.showOpenDialog(view) != JFileChooser.APPROVE_OPTION) {
             return;
         }
 
         Path root = fc.getSelectedFile().toPath();
-        crocodileView.setSelectedDir(root);
-        crocodileView.getRootDirField().setText(root.toString());
+        view.setSelectedDir(root);
+        view.getRootDirField().setText(root.toString());
         prefs.put(LAST_DIR_KEY, root.toString());
 
         refreshTable();
-        crocodileView.getSearchDirButton().setEnabled(true);
+        view.getSearchDirButton().setEnabled(true);
     }
 
     /**
@@ -171,7 +235,7 @@ public class DirectoryToolController {
 
        // List<Path> list = crocodileView.getModel().getDirectories();
         
-        List<Path> list = crocodileView.getModel()
+        List<Path> list = view.getModel()
                 .getRows()
                 .stream()
                 .map(r -> r.dir)
@@ -195,8 +259,8 @@ public class DirectoryToolController {
      */
     public void delete(List<Path> list) {
 
-        boolean deleteDir = crocodileView.getCancelButton().isSelected();
-        boolean emptyDir  = crocodileView.getEmptyButton().isSelected();
+        boolean deleteDir = view.getCancelButton().isSelected();
+        boolean emptyDir  = view.getEmptyButton().isSelected();
 
         for (Path dir : list) {
             try {
@@ -219,13 +283,13 @@ public class DirectoryToolController {
      */
     public void processAllDirectoriesByName() {
 
-        Path root = crocodileView.getSelectedDir();
-        String name = crocodileView.getSearchDir();
+        Path root = view.getSelectedDir();
+        String name = view.getSearchDir();
 
         if (root == null || name == null || name.isBlank()) return;
 
         try {
-            if (crocodileView.getCancelButton().isSelected()) {
+            if (view.getCancelButton().isSelected()) {
                 DirectoryUtils.deleteAllDirectoriesNamed(root, name);
             } else {
                 DirectoryUtils.emptyAllDirectoriesNamed(root, name);
@@ -247,11 +311,11 @@ public class DirectoryToolController {
      */
     public void moveFilesFromSelectedDir() {
 
-        int row = crocodileView.getSelectedRow();
+        int row = view.getSelectedRow();
         if (row < 0) return;
 
         //Path source = crocodileView.getModel().getDirectoryAt(row);
-        DirectoryScanResult r = crocodileView.getModel().getRow(row);
+        DirectoryScanResult r = view.getModel().getRow(row);
         Path source = r.dir;
 
         Object[] options = {
@@ -261,7 +325,7 @@ public class DirectoryToolController {
         };
 
         int choice = JOptionPane.showOptionDialog(
-                crocodileView,
+                view,
                 "Cosa vuoi spostare?",
                 "Modalità spostamento",
                 JOptionPane.DEFAULT_OPTION,
@@ -283,7 +347,7 @@ public class DirectoryToolController {
         JFileChooser fc = new JFileChooser(source.toFile());
         fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-        if (fc.showOpenDialog(crocodileView) != JFileChooser.APPROVE_OPTION) {
+        if (fc.showOpenDialog(view) != JFileChooser.APPROVE_OPTION) {
             return;
         }
 
@@ -328,14 +392,14 @@ public class DirectoryToolController {
      */
     public void updateMoveMenuState() {
 
-        JMenuItem moveItem = crocodileView.getMenuItemMoveFiles();
+        JMenuItem moveItem = view.getMenuItemMoveFiles();
 
-        int row = crocodileView.getSelectedRow();
+        int row = view.getSelectedRow();
         if (row < 0) {
             moveItem.setEnabled(false);
             return;
         }
-        DirectoryScanResult r = crocodileView.getModel().getRow(row);
+        DirectoryScanResult r = view.getModel().getRow(row);
         Path dir = r.dir;
         
        // Path dir = crocodileView.getModel().getDirectoryAt(row);
@@ -353,19 +417,19 @@ public class DirectoryToolController {
      */
    public  void deleteSelectedDirectory() {
 
-        int row = crocodileView.getSelectedRow();
+        int row = view.getSelectedRow();
         if (row < 0) {
             showWarning("Seleziona una directory.");
             return;
         }
 
         //Path dir = crocodileView.getModel().getDirectoryAt(row);
-        DirectoryScanResult r = crocodileView.getModel().getRow(row);
+        DirectoryScanResult r = view.getModel().getRow(row);
         Path dir = r.dir;
 
         // First confirmation: deletion of the directory itself
         int confirmDir = JOptionPane.showConfirmDialog(
-                crocodileView,
+                view,
                 "Vuoi cancellare la directory?\n\n" + dir.toAbsolutePath(),
                 "Conferma cancellazione",
                 JOptionPane.YES_NO_OPTION,
@@ -389,7 +453,7 @@ public class DirectoryToolController {
         if (stats.files > 0 || stats.directories > 0) {
 
             int confirmContent = JOptionPane.showConfirmDialog(
-                    crocodileView,
+                    view,
                     "ATTENZIONE: la directory non è vuota.\n\n" +
                     "Verranno eliminati:\n" +
                     "(" + stats.files + " file, " +
@@ -414,7 +478,7 @@ public class DirectoryToolController {
         }
 
         refreshTable();
-        crocodileView.setGlobalReport("Caricate "+crocodileView.getDirList().size()+" directory" );
+        view.setGlobalReport("Caricate "+view.getDirList().size()+" directory" );
     }
 
     /**
@@ -422,12 +486,12 @@ public class DirectoryToolController {
      */
    public void flattenSelectedDirectory() {
 
-	    int row = crocodileView.getSelectedRow();
+	    int row = view.getSelectedRow();
 	    if (row < 0) {
 	        showWarning("Seleziona una directory.");
 	        return;
 	    }
-	    DirectoryScanResult r = crocodileView.getModel().getRow(row);
+	    DirectoryScanResult r = view.getModel().getRow(row);
 	    Path dir = r.dir;
 
 	    //Path dir = crocodileView.getModel().getDirectoryAt(row);
@@ -440,7 +504,7 @@ public class DirectoryToolController {
 
             FlattenDirectoryDialog dlg =
                     new FlattenDirectoryDialog(
-                            crocodileView,
+                            view,
 	                    dir.getFileName().toString(),
 	                    parent.getFileName().toString()
 	            );
@@ -461,7 +525,7 @@ public class DirectoryToolController {
 	    }
 
 	    refreshTable();
-	    crocodileView.setGlobalReport("Caricate "+crocodileView.getDirList().size()+" directory" );
+	    view.setGlobalReport("Caricate "+view.getDirList().size()+" directory" );
         }
 
 
@@ -470,7 +534,7 @@ public class DirectoryToolController {
      */
    public void reorderSelectedDirectory() {
 
-	    int row = crocodileView.getSelectedRow();
+	    int row = view.getSelectedRow();
 	    if (row < 0) {
 	        showWarning("Seleziona una directory.");
 	        return;
@@ -482,11 +546,11 @@ public class DirectoryToolController {
 //	            .normalize()
 //	            .toAbsolutePath();
 	    
-	    DirectoryScanResult r = crocodileView.getModel().getRow(row);
+	    DirectoryScanResult r = view.getModel().getRow(row);
 	    Path selectedPath = r.dir.normalize().toAbsolutePath();
 
 	    // Root operativa dell'app (campo "Root dir")
-	    Path operationRoot = crocodileView.getSelectedDir()
+	    Path operationRoot = view.getSelectedDir()
 	            .normalize()
 	            .toAbsolutePath();
 
@@ -502,7 +566,7 @@ public class DirectoryToolController {
             // Dialog only configures UI inputs
             ReorderDirectoryDialog dlg =
                     new ReorderDirectoryDialog(
-	                    crocodileView,
+	                    view,
 	                    operationRoot,
 	                    selectedPath
 	            );
@@ -553,7 +617,7 @@ public class DirectoryToolController {
 
             // Present a final preview before committing the move
             int confirm = JOptionPane.showConfirmDialog(
-                    crocodileView,
+                    view,
 	            "Verrà spostata la directory:\n\n" +
 	            plan.operatedDir() +
 	            "\n\nNuovo percorso:\n\n" +
@@ -581,8 +645,8 @@ public class DirectoryToolController {
 
             // If the operative root changed, synchronize the view root
             if (plan.operatedDir().equals(operationRoot)) {
-                crocodileView.setSelectedDir(plan.targetDir());
-                crocodileView.getRootDirField().setText(plan.targetDir().toString());
+                view.setSelectedDir(plan.targetDir());
+                view.getRootDirField().setText(plan.targetDir().toString());
             }
 
 	    refreshTable();
@@ -601,7 +665,7 @@ public class DirectoryToolController {
 
     private boolean confirm(String msg) {
         return JOptionPane.showConfirmDialog(
-                crocodileView,
+                view,
                 msg,
                 "Conferma",
                 JOptionPane.YES_NO_OPTION,
@@ -611,7 +675,7 @@ public class DirectoryToolController {
 
     private void showError(String title, Exception ex) {
         JOptionPane.showMessageDialog(
-                crocodileView,
+                view,
                 title + "\n\n" + ex.getMessage(),
                 "Errore",
                 JOptionPane.ERROR_MESSAGE
@@ -620,7 +684,7 @@ public class DirectoryToolController {
 
     private void showWarning(String msg) {
         JOptionPane.showMessageDialog(
-                crocodileView,
+                view,
                 msg,
                 "Attenzione",
                 JOptionPane.WARNING_MESSAGE
@@ -649,17 +713,17 @@ public class DirectoryToolController {
      * Adds a new subdirectory inside the currently selected directory.
      */
     public void addNewDir() {
-        int row = crocodileView.getSelectedRow();
+        int row = view.getSelectedRow();
         if (row < 0) {
             showWarning("Seleziona una directory.");
             return;
         }
 
-        DirectoryScanResult r = crocodileView.getModel().getRow(row);
+        DirectoryScanResult r = view.getModel().getRow(row);
         Path parentDir = r.dir;
        // Path parentDir = crocodileView.getModel().getDirectoryAt(row);
 
-        FileNameDialog dialog = new FileNameDialog(crocodileView, "");
+        FileNameDialog dialog = new FileNameDialog(view, "");
         dialog.setVisible(true);
 
         if (dialog.getReturnStatus() == FileNameDialog.RET_CANCEL) {
@@ -689,13 +753,13 @@ public class DirectoryToolController {
      */
     public void renameCurrentDir() {
 
-        int row = crocodileView.getSelectedRow();
+        int row = view.getSelectedRow();
         if (row < 0) {
             showWarning("Seleziona una directory.");
             return;
         }
 
-        DirectoryScanResult r = crocodileView.getModel().getRow(row);
+        DirectoryScanResult r = view.getModel().getRow(row);
         Path dir = r.dir;
         //Path dir = crocodileView.getModel().getDirectoryAt(row);
         Path parent = dir.getParent();
@@ -706,7 +770,7 @@ public class DirectoryToolController {
         }
 
         FileNameDialog dialog =
-                new FileNameDialog(crocodileView, dir.getFileName().toString());
+                new FileNameDialog(view, dir.getFileName().toString());
         dialog.setVisible(true);
 
         if (dialog.getReturnStatus() == FileNameDialog.RET_CANCEL) {
@@ -741,25 +805,25 @@ public class DirectoryToolController {
      */
     public void onDirectorySelected() {
 
-        int row = crocodileView.getSelectedRow();
+        int row = view.getSelectedRow();
         if (row < 0) {
             clearDirectoryInfo();
             return;
         }
 
         //Path dir = crocodileView.getModel().getDirectoryAt(row);
-    	DirectoryScanResult r = crocodileView.getModel().getRow(row);
+    	DirectoryScanResult r = view.getModel().getRow(row);
     	Path dir = r.dir;
 
         // Label 1: info directory
-        crocodileView.setSelected("Directory selezionata: " + dir.toAbsolutePath());
+        view.setSelected("Directory selezionata: " + dir.toAbsolutePath());
 
         // Label 2: statistiche
         try {
             DirectoryStatsService.DirStats stats =
                     statsService.countRecursive(dir);
 
-            crocodileView.setDetail(
+            view.setDetail(
                     "Contenuto: " +
                     stats.files + " file, " +
                     stats.directories + " directory"
