@@ -190,6 +190,7 @@ public class DirectoryToolController {
             });
 
         new Thread(core, "swing-search").start();
+        view.getActionButton().setEnabled(true);
     }
 
 
@@ -232,20 +233,22 @@ public class DirectoryToolController {
     public void executeMainAction() {
 
         if (!confirm("Sei sicuro di procedere?")) return;
+        
+        processAllDirectoriesByName();
 
        // List<Path> list = crocodileView.getModel().getDirectories();
         
-        List<Path> list = view.getModel()
-                .getRows()
-                .stream()
-                .map(r -> r.dir)
-                .toList();
-
-        if (list != null && !list.isEmpty()) {
-            delete(list);
-        } else {
-            processAllDirectoriesByName();
-        }
+//        List<Path> list = view.getModel()
+//                .getRows()
+//                .stream()
+//                .map(r -> r.dir)
+//                .toList();
+//
+//        if (list != null && !list.isEmpty()) {
+//            delete(list);
+//        } else {
+//            processAllDirectoriesByName();
+//        }
     }
 
     /* -------------------------------------------------
@@ -257,26 +260,26 @@ public class DirectoryToolController {
      *
      * @param list directories to process
      */
-    public void delete(List<Path> list) {
-
-        boolean deleteDir = view.getCancelButton().isSelected();
-        boolean emptyDir  = view.getEmptyButton().isSelected();
-
-        for (Path dir : list) {
-            try {
-                if (deleteDir) {
-                    DirectoryUtils.deleteDirectoryRecursively(dir);
-                } else if (emptyDir) {
-                    DirectoryUtils.emptyDirectory(dir);
-                }
-            } catch (Exception ex) {
-                showError("Errore su directory:\n" + dir, ex);
-                return;
-            }
-        }
-
-        refreshTable();
-    }
+//    public void delete(List<Path> list) {
+//
+//        boolean deleteDir = view.getCancelButton().isSelected();
+//        boolean emptyDir  = view.getEmptyButton().isSelected();
+//
+//        for (Path dir : list) {
+//            try {
+//                if (deleteDir) {
+//                    DirectoryUtils.deleteDirectoryRecursively(dir);
+//                } else if (emptyDir) {
+//                    DirectoryUtils.emptyDirectory(dir);
+//                }
+//            } catch (Exception ex) {
+//                showError("Errore su directory:\n" + dir, ex);
+//                return;
+//            }
+//        }
+//
+//        refreshTable();
+//    }
 
     /**
      * Processes all directories matching the search name under the selected root.

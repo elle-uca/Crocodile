@@ -61,7 +61,6 @@ public class DirectoryToolView extends JFrame {
 
 	private DirectoryToolController controller;
 	private List<Path> dirList;
-	//private String searchDir = "invio";
 	private Path selectedDir;
 
 	private JTable table;

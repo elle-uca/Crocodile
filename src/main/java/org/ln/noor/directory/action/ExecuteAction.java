@@ -27,18 +27,18 @@ public class ExecuteAction implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
-        int confirm = JOptionPane.showConfirmDialog(
-                null,
-                "Sei sicuro di procedere?",
-                "Conferma",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.WARNING_MESSAGE
-        );
-
-        // Proceed only when the user explicitly confirms execution.
-        if (confirm == JOptionPane.YES_OPTION) {
-            controller.executeMainAction();
-        }
+    	 controller.executeMainAction();
+//        int confirm = JOptionPane.showConfirmDialog(
+//                null,
+//                "Sei sicuro di procedere?",
+//                "Conferma",
+//                JOptionPane.YES_NO_OPTION,
+//                JOptionPane.WARNING_MESSAGE
+//        );
+//
+//        // Proceed only when the user explicitly confirms execution.
+//        if (confirm == JOptionPane.YES_OPTION) {
+//            controller.executeMainAction();
+//        }
     }
 }
