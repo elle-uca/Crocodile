@@ -54,5 +54,9 @@ public class DirectoryToolPopupActionListener implements ActionListener {
         else if (item == view.getMenuDeleteIntermediateDir()) {
             controller.flattenSelectedDirectory();
         }
+        
+        else if (item == view.getMenuItemOpen()) {
+            controller.openSelectedDirectory();
+        }
     }
 }

@@ -61,6 +61,7 @@ public class DirectoryToolView extends JFrame {
 
 	private DirectoryToolController controller;
 	private List<Path> dirList;
+	//private String searchDir = "invio";
 	private Path selectedDir;
 
 	private JTable table;
@@ -73,6 +74,7 @@ public class DirectoryToolView extends JFrame {
 	private JMenuItem menuItemDeleteDir;
 	private JMenuItem menuDeleteIntermediateDir;
 	private JMenuItem menuItemReorder;
+	private JMenuItem menuItemOpen;
 
 	JProgressBar progress = new JProgressBar(0, 100);
 
@@ -105,6 +107,8 @@ public class DirectoryToolView extends JFrame {
 		menuItemMoveFiles = new JMenuItem("Move Files To...");
 		menuItemDeleteDir = new JMenuItem("Delete Directory");
 		menuDeleteIntermediateDir = new JMenuItem("Delete Intermediate Directory");
+		menuItemReorder = new JMenuItem("Reorder Directory...");
+		menuItemOpen = new JMenuItem("Open Dir");
 
 		menuItemAdd.addActionListener(
 				new DirectoryToolPopupActionListener(this, controller));
@@ -116,17 +120,18 @@ public class DirectoryToolView extends JFrame {
 				new DirectoryToolPopupActionListener(this, controller));
 		menuDeleteIntermediateDir.addActionListener(
 				new DirectoryToolPopupActionListener(this, controller));
-
-		menuItemReorder = new JMenuItem("Reorder Directory...");
-		popupMenu.add(menuItemReorder);
+		menuItemOpen.addActionListener(
+				new DirectoryToolPopupActionListener(this, controller));
 		menuItemReorder.addActionListener(
 				new DirectoryToolPopupActionListener(this, controller));
 
 		popupMenu.add(menuItemAdd);
+		popupMenu.add(menuItemOpen);
 		popupMenu.add(menuItemRename);       
 		popupMenu.add(menuItemMoveFiles);
 		popupMenu.add(menuItemDeleteDir);
 		popupMenu.add(menuDeleteIntermediateDir);
+		popupMenu.add(menuItemReorder);
 
 		table.setComponentPopupMenu(popupMenu);
 		table.addMouseListener(
@@ -385,6 +390,13 @@ public class DirectoryToolView extends JFrame {
 	 */
 	public JMenuItem getMenuDeleteIntermediateDir() {
 		return menuDeleteIntermediateDir;
+	}
+	
+	
+	
+
+	public JMenuItem getMenuItemOpen() {
+		return menuItemOpen;
 	}
 
 	/**

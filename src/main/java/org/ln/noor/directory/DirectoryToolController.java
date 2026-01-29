@@ -1,10 +1,10 @@
 package org.ln.noor.directory;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.function.Predicate;
 import java.util.prefs.Preferences;
 
@@ -844,6 +844,24 @@ public class DirectoryToolController {
     private void clearDirectoryInfo() {
 //        crocodileView.getReportLabel().setText("");
 //        crocodileView.getInfoLabel().setText("");
+    }
+    
+    public void openSelectedDirectory() {
+
+        int row = view.getSelectedRow();
+        if (row < 0) {
+            showWarning("Seleziona una directory.");
+            return;
+        }
+
+        DirectoryScanResult r = view.getModel().getRow(row);
+        Path dir = r.dir;
+
+        try {
+            Desktop.getDesktop().open(dir.toFile());
+        } catch (Exception ex) {
+            showError("Impossibile aprire la directory", ex);
+        }
     }
 
 
